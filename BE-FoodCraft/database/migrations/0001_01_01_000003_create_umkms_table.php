@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('umkms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->text('address')->nullable();
             $table->string('phone')->nullable();
             $table->foreignId('owner_id')->unique()->constrained('users')->onDelete('cascade');

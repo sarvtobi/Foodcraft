@@ -24,16 +24,18 @@ class UmkmController extends Controller
         }
 
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'address' => 'nullable|string',
-            'phone'   => 'nullable|string|max:20',
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'address'     => 'nullable|string',
+            'phone'       => 'nullable|string|max:20',
         ]);
 
         $umkm = Umkm::create([
-            'name'     => $validated['name'],
-            'address'  => $validated['address'] ?? null,
-            'phone'    => $validated['phone'] ?? null,
-            'owner_id' => $user->id,
+            'name'        => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'address'     => $validated['address'] ?? null,
+            'phone'       => $validated['phone'] ?? null,
+            'owner_id'    => $user->id,
         ]);
 
         return response()->json([
@@ -61,6 +63,36 @@ class UmkmController extends Controller
 
         return response()->json([
             'message' => 'UMKM retrieved successfully',
+            'umkm'    => $umkm,
+        ], 200);
+    }
+
+    /**
+     * Owner mengedit data UMKM-nya.
+     *
+     * PUT /api/owner/umkm
+     */
+    public function update(Request $request)
+    {
+        $umkm = $request->user()->ownedUmkm;
+
+        if (!$umkm) {
+            return response()->json([
+                'message' => 'You have not registered a UMKM yet',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name'        => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'address'     => 'nullable|string',
+            'phone'       => 'nullable|string|max:20',
+        ]);
+
+        $umkm->update($validated);
+
+        return response()->json([
+            'message' => 'UMKM updated successfully',
             'umkm'    => $umkm,
         ], 200);
     }

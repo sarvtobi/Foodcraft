@@ -24,10 +24,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
 
     // Super Admin routes
     Route::middleware('role:super_admin')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'index']);
+        
+        // Manage Users (Owners mostly)
+        Route::get('/admin/users', [AdminController::class, 'indexUsers']);
+        Route::put('/admin/users/{id}', [AdminController::class, 'updateOwner']);
+        Route::delete('/admin/users/{id}', [AdminController::class, 'deleteOwner']);
     });
 
     // Owner routes
@@ -37,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // UMKM management
         Route::post('/owner/umkm', [UmkmController::class, 'store']);
         Route::get('/owner/umkm', [UmkmController::class, 'show']);
+        Route::put('/owner/umkm', [UmkmController::class, 'update']);
 
         // Staff management
         Route::post('/owner/staff', [OwnerController::class, 'createStaff']);

@@ -15,6 +15,7 @@ class Umkm extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'address',
         'phone',
         'owner_id',

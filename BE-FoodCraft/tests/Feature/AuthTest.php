@@ -16,10 +16,11 @@ function createOwnerWithUmkm(): array
 {
     $owner = User::factory()->create(['role' => 'owner']);
     $umkm = Umkm::create([
-        'name'     => 'UMKM Test',
-        'address'  => 'Jl. Test No. 1',
-        'phone'    => '08123456789',
-        'owner_id' => $owner->id,
+        'name'        => 'UMKM Test',
+        'description' => 'Test Description',
+        'address'     => 'Jl. Test No. 1',
+        'phone'       => '08123456789',
+        'owner_id'    => $owner->id,
     ]);
     $token = $owner->createToken('test_token')->plainTextToken;
 
@@ -146,6 +147,29 @@ test('authenticated user can get profile', function () {
         ->assertJsonStructure(['message', 'user' => ['id', 'name', 'email', 'role']]);
 });
 
+test('authenticated user can update profile', function () {
+    $user = User::factory()->create(['role' => 'staff', 'name' => 'Old Name']);
+    $token = $user->createToken('test_token')->plainTextToken;
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->putJson('/api/profile', [
+        'name' => 'New Name',
+        'password' => 'newpassword123',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'User profile updated successfully',
+            'user'    => ['name' => 'New Name'],
+        ]);
+
+    $this->assertDatabaseHas('users', [
+        'id'   => $user->id,
+        'name' => 'New Name',
+    ]);
+});
+
 test('unauthenticated user cannot get profile', function () {
     $this->getJson('/api/profile')->assertStatus(401);
 });
@@ -163,20 +187,25 @@ test('owner can create a UMKM', function () {
     $response = $this->withHeaders([
         'Authorization' => 'Bearer ' . $token,
     ])->postJson('/api/owner/umkm', [
-        'name'    => 'Bakso Pak Joko',
-        'address' => 'Jl. Merdeka No. 10',
-        'phone'   => '081234567890',
+        'name'        => 'Bakso Pak Joko',
+        'description' => 'Warung bakso terbaik',
+        'address'     => 'Jl. Merdeka No. 10',
+        'phone'       => '081234567890',
     ]);
 
     $response->assertStatus(201)
         ->assertJson([
             'message' => 'UMKM created successfully',
-            'umkm'    => ['name' => 'Bakso Pak Joko'],
+            'umkm'    => [
+                'name'        => 'Bakso Pak Joko',
+                'description' => 'Warung bakso terbaik',
+            ],
         ]);
 
     $this->assertDatabaseHas('umkms', [
-        'name'     => 'Bakso Pak Joko',
-        'owner_id' => $owner->id,
+        'name'        => 'Bakso Pak Joko',
+        'description' => 'Warung bakso terbaik',
+        'owner_id'    => $owner->id,
     ]);
 });
 
@@ -203,8 +232,31 @@ test('owner can view their UMKM', function () {
     $response->assertStatus(200)
         ->assertJson([
             'message' => 'UMKM retrieved successfully',
-            'umkm'    => ['name' => 'UMKM Test'],
+            'umkm'    => ['name' => 'UMKM Test', 'description' => 'Test Description'],
         ]);
+});
+
+test('owner can update their UMKM', function () {
+    [$owner, $umkm, $token] = createOwnerWithUmkm();
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->putJson('/api/owner/umkm', [
+        'name'        => 'UMKM Updated',
+        'description' => 'New Description',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'UMKM updated successfully',
+            'umkm'    => ['name' => 'UMKM Updated', 'description' => 'New Description'],
+        ]);
+
+    $this->assertDatabaseHas('umkms', [
+        'id'          => $umkm->id,
+        'name'        => 'UMKM Updated',
+        'description' => 'New Description',
+    ]);
 });
 
 /*
@@ -324,6 +376,81 @@ test('owner cannot delete staff from other UMKM', function () {
 
     $response->assertStatus(404)
         ->assertJson(['message' => 'Staff not found in your UMKM']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin User Management Tests
+|--------------------------------------------------------------------------
+*/
+
+test('super_admin can view all users', function () {
+    $admin = User::factory()->create(['role' => 'super_admin']);
+    $token = $admin->createToken('test_token')->plainTextToken;
+
+    User::factory()->count(3)->create();
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->getJson('/api/admin/users');
+
+    $response->assertStatus(200)
+        ->assertJsonStructure(['message', 'users']);
+        
+    expect(count($response->json('users')))->toBeGreaterThanOrEqual(4); // 1 admin + 3 users
+});
+
+test('super_admin can update owner', function () {
+    $admin = User::factory()->create(['role' => 'super_admin']);
+    $owner = User::factory()->create(['role' => 'owner', 'name' => 'Old Owner']);
+    $token = $admin->createToken('test_token')->plainTextToken;
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->putJson("/api/admin/users/{$owner->id}", [
+        'name' => 'New Owner Name',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'Owner updated successfully',
+            'owner'   => ['name' => 'New Owner Name'],
+        ]);
+        
+    $this->assertDatabaseHas('users', [
+        'id'   => $owner->id,
+        'name' => 'New Owner Name',
+    ]);
+});
+
+test('super_admin cannot update non-owner user via updateOwner', function () {
+    $admin = User::factory()->create(['role' => 'super_admin']);
+    $staff = User::factory()->create(['role' => 'staff']);
+    $token = $admin->createToken('test_token')->plainTextToken;
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->putJson("/api/admin/users/{$staff->id}", [
+        'name' => 'Hacked Staff',
+    ]);
+
+    $response->assertStatus(404)
+        ->assertJson(['message' => 'Owner not found']);
+});
+
+test('super_admin can delete owner', function () {
+    $admin = User::factory()->create(['role' => 'super_admin']);
+    $owner = User::factory()->create(['role' => 'owner']);
+    $token = $admin->createToken('test_token')->plainTextToken;
+
+    $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $token,
+    ])->deleteJson("/api/admin/users/{$owner->id}");
+
+    $response->assertStatus(200)
+        ->assertJson(['message' => 'Owner deleted successfully']);
+        
+    $this->assertDatabaseMissing('users', ['id' => $owner->id]);
 });
 
 /*
