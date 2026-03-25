@@ -24,7 +24,8 @@ export default function UserManagement() {
     try {
       setIsLoading(true);
       const res = await api.get('/api/admin/users');
-      setUsers(res.data.data || res.data);
+      const uData = res.data.users || res.data.data || res.data;
+      setUsers(Array.isArray(uData) ? uData : []);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch users');
     } finally {
@@ -38,7 +39,7 @@ export default function UserManagement() {
 
   const openUpdateModal = (user: User) => {
     setSelectedUser(user);
-    setFormData({ name: user.name, email: user.email, password: '' });
+    setFormData({ name: user.name || '', email: user.email || '', password: '' });
     setFormError('');
     setIsUpdateModalOpen(true);
   };
@@ -134,7 +135,7 @@ export default function UserManagement() {
                           u.role === 'super_admin' ? 'bg-red-100 text-red-700' : 
                           u.role === 'owner' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
                         }`}>
-                          {u.role.replace('_', ' ')}
+                          {u.role ? u.role.replace('_', ' ') : 'USER'}
                         </span>
                       </td>
                       <td className="p-4 text-right">
