@@ -38,16 +38,18 @@ class ProdukController extends Controller
         }
 
         $validated = $request->validate([
-            'nama'      => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'harga'     => 'required|numeric|min:0',
+            'nama'           => 'required|string|max:255',
+            'deskripsi'      => 'nullable|string',
+            'harga'          => 'required|numeric|min:0',
+            'waktu_produksi' => 'nullable|integer|min:0',
         ]);
 
         $produk = Produk::create([
-            'umkm_id'   => $umkm->id,
-            'nama'      => $validated['nama'],
-            'deskripsi' => $validated['deskripsi'] ?? null,
-            'harga'     => $validated['harga'],
+            'umkm_id'        => $umkm->id,
+            'nama'           => $validated['nama'],
+            'deskripsi'      => $validated['deskripsi'] ?? null,
+            'harga'          => $validated['harga'],
+            'waktu_produksi' => $validated['waktu_produksi'] ?? 0,
         ]);
 
         return response()->json([
@@ -92,9 +94,10 @@ class ProdukController extends Controller
         }
 
         $validated = $request->validate([
-            'nama'      => 'sometimes|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'harga'     => 'sometimes|numeric|min:0',
+            'nama'           => 'sometimes|string|max:255',
+            'deskripsi'      => 'nullable|string',
+            'harga'          => 'sometimes|numeric|min:0',
+            'waktu_produksi' => 'sometimes|integer|min:0',
         ]);
 
         $produk->update($validated);

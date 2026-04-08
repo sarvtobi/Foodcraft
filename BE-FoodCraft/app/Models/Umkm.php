@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Umkm extends Model
 {
@@ -50,5 +51,13 @@ class Umkm extends Model
     public function produks(): HasMany
     {
         return $this->hasMany(Produk::class, 'umkm_id');
+    }
+
+    /**
+     * UMKM memiliki satu pengaturan kapasitas.
+     */
+    public function pengaturanKapasitas(): HasOne
+    {
+        return $this->hasOne(PengaturanKapasitas::class, 'umkm_id');
     }
 }

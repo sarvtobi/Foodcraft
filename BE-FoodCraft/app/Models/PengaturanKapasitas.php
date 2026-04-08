@@ -5,29 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Produk extends Model
+class PengaturanKapasitas extends Model
 {
     use HasFactory;
 
-    protected $table = 'produks';
+    protected $table = 'pengaturan_kapasitas';
 
     protected $fillable = [
         'umkm_id',
-        'nama',
-        'deskripsi',
-        'harga',
-        'waktu_produksi',
+        'kapasitas_harian_menit',
+        'hari_operasi',
+    ];
+
+    protected $casts = [
+        'hari_operasi' => 'array',
     ];
 
     public function umkm(): BelongsTo
     {
         return $this->belongsTo(Umkm::class, 'umkm_id');
-    }
-
-    public function resep(): HasMany
-    {
-        return $this->hasMany(ResepProduk::class, 'produk_id');
     }
 }

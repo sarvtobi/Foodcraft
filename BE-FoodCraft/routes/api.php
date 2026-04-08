@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakuController;
+use App\Http\Controllers\KapasitasController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ResepProdukController;
@@ -68,6 +69,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/owner/produk/{id}', [ProdukController::class, 'update']);
         Route::delete('/owner/produk/{id}', [ProdukController::class, 'destroy']);
 
+        // Master Data: Kapasitas
+        Route::get('/owner/kapasitas', [KapasitasController::class, 'show']);
+        Route::post('/owner/kapasitas', [KapasitasController::class, 'upsert']);
+
         // Master Data: Resep
         Route::post('/owner/produk/{produk_id}/resep', [ResepProdukController::class, 'store']);
         Route::put('/owner/resep/{id}', [ResepProdukController::class, 'update']);
@@ -83,5 +88,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/staff/bahan-baku/{id}', [BahanBakuController::class, 'show']);
         Route::get('/staff/produk', [ProdukController::class, 'index']);
         Route::get('/staff/produk/{id}', [ProdukController::class, 'show']);
+        Route::get('/staff/kapasitas', [KapasitasController::class, 'show']);
     });
 });
