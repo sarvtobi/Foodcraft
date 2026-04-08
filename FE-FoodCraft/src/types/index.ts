@@ -32,3 +32,35 @@ export interface ApiResponse<T> {
   data: T;
   error?: string;
 }
+
+export interface BahanBaku {
+  id: number;
+  umkm_id: number;
+  nama: string;
+  satuan: string;
+  stok: number;
+  stok_minimum: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Resep {
+  id: number;
+  produk_id: number;
+  bahan_baku_id: number;
+  kuantitas: number;
+  bahan_baku?: BahanBaku;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Produk {
+  id: number;
+  umkm_id: number;
+  nama: string;
+  harga: number;
+  deskripsi: string | null;
+  resep?: Resep[];
+  created_at?: string;
+  updated_at?: string;
+}

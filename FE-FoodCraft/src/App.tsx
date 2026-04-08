@@ -13,8 +13,12 @@ import AdminUserManagement from './pages/admin/UserManagement';
 import OwnerDashboard from './pages/owner/Dashboard';
 import UMKMManagement from './pages/owner/UMKMManagement';
 import StaffManagement from './pages/owner/StaffManagement';
+import BahanBakuManagement from './pages/owner/BahanBakuManagement';
+import ProdukManagement from './pages/owner/ProdukManagement';
 
 import StaffDashboard from './pages/staff/Dashboard';
+import StaffBahanBakuList from './pages/staff/BahanBakuList';
+import StaffProdukList from './pages/staff/ProdukList';
 
 function App() {
   return (
@@ -39,11 +43,15 @@ function App() {
                 <Route path="/owner/dashboard" element={<OwnerDashboard />} />
                 <Route path="/owner/umkm" element={<UMKMManagement />} />
                 <Route path="/owner/staff" element={<StaffManagement />} />
+                <Route path="/owner/bahan-baku" element={<BahanBakuManagement />} />
+                <Route path="/owner/produk" element={<ProdukManagement />} />
               </Route>
 
               {/* Staff Routes */}
               <Route element={<ProtectedRoute allowedRoles={['staff']} />}>
                 <Route path="/staff/dashboard" element={<StaffDashboard />} />
+                <Route path="/staff/bahan-baku" element={<StaffBahanBakuList />} />
+                <Route path="/staff/produk" element={<StaffProdukList />} />
               </Route>
             </Route>
           </Route>
