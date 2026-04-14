@@ -68,4 +68,12 @@ class Umkm extends Model
     {
         return $this->hasMany(Pesanan::class, 'umkm_id');
     }
+
+    /**
+     * UMKM memiliki banyak jadwal produksi.
+     */
+    public function jadwalProduksis(): HasMany
+    {
+        return $this->hasMany(JadwalProduksi::class, 'umkm_id');
+    }
 }
