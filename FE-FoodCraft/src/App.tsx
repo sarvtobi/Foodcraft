@@ -19,6 +19,8 @@ import ProdukManagement from './pages/owner/ProdukManagement';
 import StaffDashboard from './pages/staff/Dashboard';
 import StaffBahanBakuList from './pages/staff/BahanBakuList';
 import StaffProdukList from './pages/staff/ProdukList';
+import KapasitasManagement from './pages/owner/KapasitasManagement';
+import KapasitasInfo from './pages/staff/KapasitasInfo';
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function App() {
                 <Route path="/owner/staff" element={<StaffManagement />} />
                 <Route path="/owner/bahan-baku" element={<BahanBakuManagement />} />
                 <Route path="/owner/produk" element={<ProdukManagement />} />
+                <Route path="/owner/kapasitas" element={<KapasitasManagement />} />
               </Route>
 
               {/* Staff Routes */}
@@ -52,6 +55,7 @@ function App() {
                 <Route path="/staff/dashboard" element={<StaffDashboard />} />
                 <Route path="/staff/bahan-baku" element={<StaffBahanBakuList />} />
                 <Route path="/staff/produk" element={<StaffProdukList />} />
+                <Route path="/staff/kapasitas" element={<KapasitasInfo />} />
               </Route>
             </Route>
           </Route>

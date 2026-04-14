@@ -22,7 +22,8 @@ export default function ProdukManagement() {
   const [formProduk, setFormProduk] = useState({
     nama: '',
     harga: 0,
-    deskripsi: ''
+    deskripsi: '',
+    waktu_produksi: 0
   });
   
   // Form State Resep
@@ -59,7 +60,7 @@ export default function ProdukManagement() {
   // --- HANDLER PRODUK ---
   const openCreateProduk = () => {
     setModalMode('create');
-    setFormProduk({ nama: '', harga: 0, deskripsi: '' });
+    setFormProduk({ nama: '', harga: 0, deskripsi: '', waktu_produksi: 0 });
     setFormError('');
     setIsFormModalOpen(true);
   };
@@ -70,7 +71,8 @@ export default function ProdukManagement() {
     setFormProduk({ 
       nama: item.nama, 
       harga: item.harga || 0, 
-      deskripsi: item.deskripsi || '' 
+      deskripsi: item.deskripsi || '',
+      waktu_produksi: item.waktu_produksi || 0
     });
     setFormError('');
     setIsFormModalOpen(true);
@@ -90,7 +92,8 @@ export default function ProdukManagement() {
       const payload = {
         nama: formProduk.nama,
         harga: Number(formProduk.harga),
-        deskripsi: formProduk.deskripsi
+        deskripsi: formProduk.deskripsi,
+        waktu_produksi: Number(formProduk.waktu_produksi)
       };
 
       if (modalMode === 'create') {
@@ -208,6 +211,7 @@ export default function ProdukManagement() {
                   <th>Nama Produk</th>
                   <th>Deskripsi</th>
                   <th>Harga</th>
+                  <th>Waktu Produksi</th>
                   <th>Jumlah Bahan</th>
                   <th style={{ textAlign: 'right' }}>Aksi</th>
                 </tr>
@@ -220,6 +224,15 @@ export default function ProdukManagement() {
                     <td>{item.deskripsi || '-'}</td>
                     <td style={{ color: 'var(--success)', fontWeight: 600 }}>
                       Rp {item.harga?.toLocaleString('id-ID')}
+                    </td>
+                    <td>
+                      {item.waktu_produksi != null && item.waktu_produksi > 0 ? (
+                        <span className="badge" style={{ backgroundColor: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                          ⏱ {item.waktu_produksi} mnt
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>—</span>
+                      )}
                     </td>
                     <td>
                       <span className="badge" style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0' }}>
@@ -294,6 +307,20 @@ export default function ProdukManagement() {
                   required
                   value={formProduk.harga}
                   onChange={e => setFormProduk({ ...formProduk, harga: Number(e.target.value) })}
+                />
+              </div>
+              <div className="form-group">
+                <label>
+                  Waktu Produksi (menit/unit)
+                  <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: '0.5rem', fontSize: '0.8rem' }}>— berapa menit untuk 1 produk?</span>
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className="form-control"
+                  value={formProduk.waktu_produksi}
+                  onChange={e => setFormProduk({ ...formProduk, waktu_produksi: Number(e.target.value) })}
+                  placeholder="0"
                 />
               </div>
               <div className="form-group">
