@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag } from 'lucide-react';
+import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer } from 'lucide-react';
 import ProfileUpdateModal from './ProfileUpdateModal';
 
 export const Layout = () => {
@@ -28,6 +28,7 @@ export const Layout = () => {
           { name: 'Manajemen UMKM', to: '/owner/umkm', icon: <Store size={20} /> },
           { name: 'Bahan Baku', to: '/owner/bahan-baku', icon: <Package size={20} /> },
           { name: 'Produk & Resep', to: '/owner/produk', icon: <ShoppingBag size={20} /> },
+          { name: 'Kapasitas Produksi', to: '/owner/kapasitas', icon: <Timer size={20} /> },
           { name: 'Manajemen Staff', to: '/owner/staff', icon: <Users size={20} /> },
         ];
       case 'staff':
@@ -35,6 +36,7 @@ export const Layout = () => {
           { name: 'Dashboard Staff', to: '/staff/dashboard', icon: <Home size={20} /> },
           { name: 'Stok Bahan Baku', to: '/staff/bahan-baku', icon: <Package size={20} /> },
           { name: 'Daftar Menu', to: '/staff/produk', icon: <ShoppingBag size={20} /> },
+          { name: 'Info Kapasitas', to: '/staff/kapasitas', icon: <Timer size={20} /> },
         ];
       default:
         return [];

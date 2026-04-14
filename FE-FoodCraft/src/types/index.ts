@@ -60,7 +60,17 @@ export interface Produk {
   nama: string;
   harga: number;
   deskripsi: string | null;
+  waktu_produksi?: number;
   resep?: Resep[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Kapasitas {
+  id?: number;
+  umkm_id?: number;
+  kapasitas_harian_menit: number;
+  hari_operasi: string[];
   created_at?: string;
   updated_at?: string;
 }
