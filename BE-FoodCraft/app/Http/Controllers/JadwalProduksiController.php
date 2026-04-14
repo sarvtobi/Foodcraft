@@ -191,7 +191,28 @@ class JadwalProduksiController extends Controller
 
             // Update jadwal & pesanan
             $jadwal->update(['status' => 'selesai']);
-            $jadwal->pesanan->update(['status' => 'selesai']);
+            
+            $waktuSelesai = Carbon::now();
+            $jadwal->pesanan->update([
+                'status' => 'selesai',
+                'diselesaikan_pada' => $waktuSelesai
+            ]);
+
+            // Pengecekan Riwayat Keterlambatan Real-Time
+            $tenggatWaktu = Carbon::parse($jadwal->pesanan->tenggat_waktu)->endOfDay();
+            if ($waktuSelesai->greaterThan($tenggatWaktu)) {
+                $selisihHari = $waktuSelesai->diffInDays($tenggatWaktu);
+                // Ensure it counts at least 1 day if it crosses midnight
+                if ($selisihHari == 0) $selisihHari = 1;
+
+                \App\Models\RiwayatKeterlambatan::create([
+                    // 'umkm_id' => $umkm->id,
+                    'pesanan_id' => $jadwal->pesanan->id,
+                    'tenggat_waktu' => $jadwal->pesanan->tenggat_waktu,
+                    'diselesaikan_pada' => $waktuSelesai,
+                    'selisih_hari' => $selisihHari,
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Produksi selesai. Stok bahan baku telah dipotong.'

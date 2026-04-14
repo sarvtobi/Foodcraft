@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalisisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\JadwalProduksiController;
@@ -79,6 +80,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/owner/produk/{produk_id}/resep', [ResepProdukController::class, 'store']);
         Route::put('/owner/resep/{id}', [ResepProdukController::class, 'update']);
         Route::delete('/owner/resep/{id}', [ResepProdukController::class, 'destroy']);
+
+        // Modul 5: Analitik Dasbor
+        Route::get('/owner/dasbor-analitik', [AnalisisController::class, 'index']);
     });
 
     // Pesanan routes (Owner & Staff)

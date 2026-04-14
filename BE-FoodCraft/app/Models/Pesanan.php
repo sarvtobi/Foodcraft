@@ -19,6 +19,13 @@ class Pesanan extends Model
         'status',
         'prioritas',
         'total_harga',
+        'diselesaikan_pada',
+    ];
+
+    protected $casts = [
+        'tenggat_waktu' => 'date',
+        'total_harga' => 'decimal:2',
+        'diselesaikan_pada' => 'datetime',
     ];
 
     /**
