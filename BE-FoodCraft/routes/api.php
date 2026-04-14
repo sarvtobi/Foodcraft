@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalisisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakuController;
+use App\Http\Controllers\JadwalProduksiController;
 use App\Http\Controllers\KapasitasController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ResepProdukController;
 use App\Http\Controllers\StaffController;
@@ -77,6 +80,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/owner/produk/{produk_id}/resep', [ResepProdukController::class, 'store']);
         Route::put('/owner/resep/{id}', [ResepProdukController::class, 'update']);
         Route::delete('/owner/resep/{id}', [ResepProdukController::class, 'destroy']);
+
+        // Modul 5: Analitik Dasbor
+        Route::get('/owner/dasbor-analitik', [AnalisisController::class, 'index']);
+    });
+
+    // Pesanan routes (Owner & Staff)
+    Route::middleware('role:owner,staff')->group(function () {
+        Route::get('/pesanan', [PesananController::class, 'index']);
+        Route::post('/pesanan', [PesananController::class, 'store']);
+        Route::get('/pesanan/{id}', [PesananController::class, 'show']);
+        Route::put('/pesanan/{id}/status', [PesananController::class, 'updateStatus']);
+        
+        // Modul 4: Engine Jadwal
+        Route::post('/owner/pesanan/{id}/jadwalkan', [JadwalProduksiController::class, 'jadwalkan']);
+        Route::get('/staff/jadwal-produksi', [JadwalProduksiController::class, 'index']);
+        Route::post('/staff/jadwal-produksi/{id}/selesai', [JadwalProduksiController::class, 'selesai']);
     });
 
     // Staff routes
