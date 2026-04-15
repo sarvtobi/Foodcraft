@@ -21,6 +21,9 @@ import StaffBahanBakuList from './pages/staff/BahanBakuList';
 import StaffProdukList from './pages/staff/ProdukList';
 import KapasitasManagement from './pages/owner/KapasitasManagement';
 import KapasitasInfo from './pages/staff/KapasitasInfo';
+import PesananManagement from './pages/PesananManagement';
+import JadwalProduksi from './pages/JadwalProduksi';
+import DasborAnalitik from './pages/owner/DasborAnalitik';
 
 function App() {
   return (
@@ -48,6 +51,9 @@ function App() {
                 <Route path="/owner/bahan-baku" element={<BahanBakuManagement />} />
                 <Route path="/owner/produk" element={<ProdukManagement />} />
                 <Route path="/owner/kapasitas" element={<KapasitasManagement />} />
+                <Route path="/owner/pesanan" element={<PesananManagement />} />
+                <Route path="/owner/jadwal-produksi" element={<JadwalProduksi />} />
+                <Route path="/owner/analitik" element={<DasborAnalitik />} />
               </Route>
 
               {/* Staff Routes */}
@@ -56,6 +62,8 @@ function App() {
                 <Route path="/staff/bahan-baku" element={<StaffBahanBakuList />} />
                 <Route path="/staff/produk" element={<StaffProdukList />} />
                 <Route path="/staff/kapasitas" element={<KapasitasInfo />} />
+                <Route path="/staff/pesanan" element={<PesananManagement />} />
+                <Route path="/staff/jadwal-produksi" element={<JadwalProduksi />} />
               </Route>
             </Route>
           </Route>

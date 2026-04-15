@@ -74,3 +74,44 @@ export interface Kapasitas {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface PesananItem {
+  id: number;
+  pesanan_id: number;
+  produk_id: number;
+  kuantitas: number;
+  harga_satuan: number;
+  subtotal?: number;
+  produk?: Produk;
+}
+
+export type PesananStatus = 'pending' | 'diproses' | 'selesai' | 'dibatalkan';
+export type PesananPrioritas = 'tinggi' | 'sedang' | 'rendah';
+
+export interface Pesanan {
+  id: number;
+  umkm_id?: number;
+  pelanggan: string;
+  tenggat_waktu: string;
+  status: PesananStatus;
+  prioritas: PesananPrioritas;
+  total?: number;
+  total_harga?: string | number;
+  diselesaikan_pada?: string | null;
+  items?: PesananItem[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JadwalProduksi {
+  id: number;
+  umkm_id?: number;
+  pesanan_id: number;
+  tanggal_produksi: string;
+  total_waktu_menit?: number;
+  status: 'dijadwalkan' | 'selesai';
+  terlambat: boolean | number;
+  pesanan?: Pesanan;
+  created_at?: string;
+  updated_at?: string;
+}
