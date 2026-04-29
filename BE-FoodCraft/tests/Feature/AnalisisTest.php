@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\Umkm;
+use App\Models\BahanBaku;
 use App\Models\Pesanan;
 use App\Models\JadwalProduksi;
 use App\Models\RiwayatKeterlambatan;
@@ -11,40 +12,78 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('dasbor analitik mengembalikan metrik yang akurat', function () {
+test('dasbor analitik mengembalikan struktur dan metrik yang akurat', function () {
     $owner = User::factory()->create(['role' => 'owner']);
-    $umkm = Umkm::create(['name' => 'UMKM Analitik', 'owner_id' => $owner->id]);
-    PengaturanKapasitas::create(['umkm_id' => $umkm->id, 'kapasitas_harian_menit' => 480, 'hari_operasi' => ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]]);
-    
-    // 1. Pesanan Selesai (Tepat Waktu) -> tgl skrg = dibwah tenggat (misal tenggat besok)
-    $p1 = Pesanan::create(['umkm_id' => $umkm->id, 'pelanggan' => 'P1', 'tenggat_waktu' => Carbon::now()->addDays(2), 'status' => 'selesai', 'diselesaikan_pada' => Carbon::now()]);
-    
-    // 2. Pesanan Selesai (Terlambat) -> tenggat sdh lewat
-    $p2 = Pesanan::create(['umkm_id' => $umkm->id, 'pelanggan' => 'P2', 'tenggat_waktu' => Carbon::now()->subDays(2), 'status' => 'selesai', 'diselesaikan_pada' => Carbon::now()]);
-    RiwayatKeterlambatan::create(['umkm_id' => $umkm->id, 'pesanan_id' => $p2->id, 'tenggat_waktu' => $p2->tenggat_waktu, 'diselesaikan_pada' => Carbon::now(), 'selisih_hari' => 2]);
+    $umkm  = Umkm::create(['name' => 'UMKM Analitik', 'owner_id' => $owner->id]);
+    PengaturanKapasitas::create([
+        'umkm_id'             => $umkm->id,
+        'kapasitas_harian_menit' => 480,
+        'hari_operasi'        => ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"],
+    ]);
 
-    // 3. Pesanan Diproses
-    $p3 = Pesanan::create(['umkm_id' => $umkm->id, 'pelanggan' => 'P3', 'tenggat_waktu' => Carbon::now()->addDays(5), 'status' => 'diproses']);
+    // Bahan baku sehat
+    BahanBaku::create(['umkm_id' => $umkm->id, 'nama' => 'Tepung', 'satuan' => 'kg', 'stok' => 100, 'stok_minimum' => 20]);
 
-    // 4. Jadwal Produksi untk utilisasi (terpakai 240 menit)
-    JadwalProduksi::create(['umkm_id' => $umkm->id, 'pesanan_id' => $p1->id, 'tanggal_produksi' => Carbon::now()->toDateString(), 'total_waktu_menit' => 240]);
+    // Pesanan selesai tepat waktu
+    Pesanan::create([
+        'umkm_id'          => $umkm->id,
+        'pelanggan'        => 'P1',
+        'tenggat_waktu'    => Carbon::now()->addDays(2),
+        'status'           => 'selesai',
+        'diselesaikan_pada'=> Carbon::now(),
+    ]);
+
+    // Pesanan selesai terlambat
+    $p2 = Pesanan::create([
+        'umkm_id'          => $umkm->id,
+        'pelanggan'        => 'P2',
+        'tenggat_waktu'    => Carbon::now()->subDays(2),
+        'status'           => 'selesai',
+        'diselesaikan_pada'=> Carbon::now(),
+    ]);
+    RiwayatKeterlambatan::create([
+        'umkm_id'          => $umkm->id,
+        'pesanan_id'       => $p2->id,
+        'tenggat_waktu'    => $p2->tenggat_waktu,
+        'diselesaikan_pada'=> Carbon::now(),
+        'selisih_hari'     => 2,
+    ]);
+
+    // Pesanan diproses
+    Pesanan::create([
+        'umkm_id'       => $umkm->id,
+        'pelanggan'     => 'P3',
+        'tenggat_waktu' => Carbon::now()->addDays(5),
+        'status'        => 'diproses',
+    ]);
 
     $response = $this->actingAs($owner)->getJson('/api/owner/dasbor-analitik');
 
     $response->assertStatus(200);
-    $data = $response->json();
+    $json = $response->json();
 
-    expect($data['performa_pesanan']['total_masuk'])->toBe(3);
-    expect($data['performa_pesanan']['selesai'])->toBe(2);
-    expect($data['performa_pesanan']['sedang_diproses'])->toBe(1);
-    expect($data['performa_pesanan']['terlambat'])->toBe(1);
+    // Periksa status dan struktur utama
+    expect($json['status'])->toBe('success');
+    expect($json['data'])->toHaveKeys([
+        'periode', 'last_updated', 'statistik_utama',
+        'grafik_performa', 'ringkasan_produksi', 'notifikasi_stok',
+    ]);
 
-    // OTD (Ketepatan Waktu): 1 Tepat Waktu / 2 Selesai = 50%
-    expect($data['ketepatan_waktu_persen'])->toBe(50);
+    // statistik_utama memiliki 4 kunci
+    expect($json['data']['statistik_utama'])->toHaveKeys([
+        'total_output', 'tingkat_keterlambatan', 'status_bahan_baku', 'mitra_aktif',
+    ]);
 
-    // Utilisasi = 240 / (HariBulanIni * 480) * 100
-    // Asumsikan bulan ini minimal ada 28 hari kerja karena Senin-Minggu ON
-    $expectedKapasitas = Carbon::now()->daysInMonth * 480;
-    $expectedUtilisasi = round((240 / $expectedKapasitas) * 100, 2);
-    expect($data['utilisasi_kapasitas_persen'])->toBe($expectedUtilisasi);
+    // Grafik performa memiliki 12 bulan
+    expect(count($json['data']['grafik_performa']))->toBe(12);
+
+    // Tingkat keterlambatan = 1 telat / 2 selesai = 50%
+    expect((float)$json['data']['statistik_utama']['tingkat_keterlambatan']['value'])->toBe(50.0);
+
+    // Status bahan baku = 100% (1 bahan di atas minimum)
+    expect((float)$json['data']['statistik_utama']['status_bahan_baku']['value'])->toBe(100.0);
+    expect($json['data']['statistik_utama']['status_bahan_baku']['label'])->toBe('Sehat');
+
+    // Mitra aktif = 3 pelanggan unik (P1, P2, P3)
+    expect($json['data']['statistik_utama']['mitra_aktif']['value'])->toBe(3);
 });
