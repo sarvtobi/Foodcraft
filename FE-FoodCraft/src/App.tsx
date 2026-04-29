@@ -23,7 +23,7 @@ import KapasitasManagement from './pages/owner/KapasitasManagement';
 import KapasitasInfo from './pages/staff/KapasitasInfo';
 import PesananManagement from './pages/PesananManagement';
 import JadwalProduksi from './pages/JadwalProduksi';
-import DasborAnalitik from './pages/owner/DasborAnalitik';
+
 
 function App() {
   return (
@@ -53,7 +53,7 @@ function App() {
                 <Route path="/owner/kapasitas" element={<KapasitasManagement />} />
                 <Route path="/owner/pesanan" element={<PesananManagement />} />
                 <Route path="/owner/jadwal-produksi" element={<JadwalProduksi />} />
-                <Route path="/owner/analitik" element={<DasborAnalitik />} />
+                <Route path="/owner/analitik" element={<Navigate to="/owner/dashboard" replace />} />
               </Route>
 
               {/* Staff Routes */}

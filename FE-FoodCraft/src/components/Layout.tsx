@@ -24,14 +24,13 @@ export const Layout = () => {
         ];
       case 'owner':
         return [
-          { name: 'Dashboard Owner', to: '/owner/dashboard', icon: <Home size={20} /> },
-          { name: 'Manajemen UMKM', to: '/owner/umkm', icon: <Store size={20} /> },
-          { name: 'Bahan Baku', to: '/owner/bahan-baku', icon: <Package size={20} /> },
-          { name: 'Produk & Resep', to: '/owner/produk', icon: <ShoppingBag size={20} /> },
-          { name: 'Kapasitas Produksi', to: '/owner/kapasitas', icon: <Timer size={20} /> },
+          { name: 'Dashboard', to: '/owner/dashboard', icon: <Home size={20} /> },
           { name: 'Pesanan', to: '/owner/pesanan', icon: <ClipboardList size={20} /> },
-          { name: 'Jadwal Produksi', to: '/owner/jadwal-produksi', icon: <ChefHat size={20} /> },
-          { name: 'Analitik', to: '/owner/analitik', icon: <BarChart3 size={20} /> },
+          { name: 'Kapasitas Produksi', to: '/owner/kapasitas', icon: <Timer size={20} /> },
+          { name: 'Inventaris', to: '/owner/bahan-baku', icon: <Package size={20} /> },
+          { name: 'Laporan', to: '/owner/jadwal-produksi', icon: <BarChart3 size={20} /> },
+          { name: 'Manajemen UMKM', to: '/owner/umkm', icon: <Store size={20} /> },
+          { name: 'Produk & Resep', to: '/owner/produk', icon: <ShoppingBag size={20} /> },
           { name: 'Manajemen Staff', to: '/owner/staff', icon: <Users size={20} /> },
         ];
       case 'staff':
