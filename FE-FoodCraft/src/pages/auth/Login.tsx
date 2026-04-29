@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../lib/axios';
+import AnimatedLogo from '../../components/AnimatedLogo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -39,7 +40,7 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-header">
           <div className="flex-center mb-4">
-             <div className="logo-icon" style={{ width: 48, height: 48, fontSize: '1.5rem' }}>FC</div>
+             <AnimatedLogo size={96} />
           </div>
           <h1>Welcome Back</h1>
           <p>Login to manage your UMKM</p>
