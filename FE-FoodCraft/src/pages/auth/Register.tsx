@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../lib/axios';
+import AnimatedLogo from '../../components/AnimatedLogo';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -42,7 +43,7 @@ export default function Register() {
       <div className="auth-card">
         <div className="auth-header">
           <div className="flex-center mb-4">
-             <div className="logo-icon" style={{ width: 48, height: 48, fontSize: '1.5rem' }}>FC</div>
+             <AnimatedLogo size={96} />
           </div>
           <h1>Create an Account</h1>
           <p>Register to start offering your food products</p>
