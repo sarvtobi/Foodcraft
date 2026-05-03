@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import {
   BarChart3, RefreshCw, ChevronLeft, ChevronRight,
   TrendingUp, TrendingDown, Clock, Package, Users,
-  AlertTriangle, CheckCircle2, Activity,
+  CheckCircle2, Activity,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
