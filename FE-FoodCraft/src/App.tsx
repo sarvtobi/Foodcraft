@@ -4,8 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
 
 import LandingPage from './pages/LandingPage';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import AuthPage from './pages/auth/AuthPage';
 
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminUserManagement from './pages/admin/UserManagement';
@@ -31,8 +30,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
