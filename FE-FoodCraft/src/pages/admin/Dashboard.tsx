@@ -41,9 +41,9 @@ export default function AdminDashboard() {
   }
 
   const metrics = [
-    { label: 'Total Pengguna', value: data?.total_users || 0, icon: <Users size={24} />, color: 'var(--primary)', bg: 'var(--nav-active)' },
-    { label: 'Total Owner UMKM', value: data?.total_owners || 0, icon: <ShieldCheck size={24} />, color: '#16A34A', bg: 'oklch(0.92 0.15 150 / 10%)' },
-    { label: 'UMKM Terdaftar', value: data?.total_umkm || 0, icon: <Store size={24} />, color: '#8B5CF6', bg: 'oklch(0.5 0.2 260 / 10%)' },
+    { label: 'Total Pengguna', value: data?.total_users ?? 0, icon: <Users size={24} />, color: 'var(--primary)', bg: 'var(--nav-active)', path: '/admin/users' },
+    { label: 'Total Owner UMKM', value: data?.total_owners ?? 0, icon: <ShieldCheck size={24} />, color: '#16A34A', bg: 'oklch(0.92 0.15 150 / 10%)', path: '/admin/users' },
+    { label: 'API Traffic (Logs)', value: data?.total_api_logs ?? 'Live', icon: <Activity size={24} />, color: '#0EA5E9', bg: 'oklch(0.5 0.2 260 / 10%)', path: '/admin/api-logs' },
   ];
 
   return (
@@ -57,20 +57,21 @@ export default function AdminDashboard() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {metrics.map((m) => (
-          <div key={m.label} className="card" style={{ marginBottom: 0, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div style={{ backgroundColor: m.bg, color: m.color, padding: '0.85rem', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {m.icon}
-            </div>
-            <div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</p>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)' }}>{m.value}</h3>
-                <span style={{ fontSize: '0.75rem', color: '#16A34A', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
-                  <TrendingUp size={12} /> +{Math.floor(Math.random() * 5)}
-                </span>
+          <Link key={m.label} to={m.path} style={{ textDecoration: 'none' }}>
+            <div className="card" style={{ marginBottom: 0, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem', transition: 'transform 0.2s', border: '1px solid var(--border)' }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ backgroundColor: m.bg, color: m.color, padding: '0.85rem', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {m.icon}
+              </div>
+              <div>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)' }}>{m.value}</h3>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

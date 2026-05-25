@@ -9,6 +9,7 @@ import AuthPage from './pages/auth/AuthPage';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminUserManagement from './pages/admin/UserManagement';
 import ActivityLogs from './pages/admin/ActivityLogs';
+import ApiRequestLogs from './pages/admin/ApiRequestLogs';
 
 import OwnerDashboard from './pages/owner/Dashboard';
 import UMKMManagement from './pages/owner/UMKMManagement';
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/users" element={<AdminUserManagement />} />
                 <Route path="/admin/activity-logs" element={<ActivityLogs />} />
+                <Route path="/admin/api-logs" element={<ApiRequestLogs />} />
               </Route>
 
               {/* Owner Routes */}

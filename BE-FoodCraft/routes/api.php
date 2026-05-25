@@ -13,6 +13,7 @@ use App\Http\Controllers\ResepProdukController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ApiRequestLogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Log Aktivitas
         Route::get('/admin/activity-logs', [ActivityLogController::class, 'adminLoginLogs']);
+        
+        // Log API Requests
+        Route::get('/admin/api-logs', [ApiRequestLogController::class, 'index']);
     });
 
     // Owner routes
