@@ -61,11 +61,11 @@ export default function KapasitasInfo() {
             {/* Kapasitas Menit */}
             <div
               className="card"
-              style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.5rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.5rem', marginBottom: 0 }}
             >
               <div
                 style={{
-                  backgroundColor: '#EEF2FF',
+                  backgroundColor: 'var(--nav-active)',
                   color: 'var(--primary)',
                   padding: '0.75rem',
                   borderRadius: '12px',
@@ -101,11 +101,11 @@ export default function KapasitasInfo() {
             {/* Jumlah Hari Aktif */}
             <div
               className="card"
-              style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.5rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.5rem', marginBottom: 0 }}
             >
               <div
                 style={{
-                  backgroundColor: '#F0FDF4',
+                  backgroundColor: 'oklch(0.92 0.15 150 / 10%)',
                   color: '#16A34A',
                   padding: '0.75rem',
                   borderRadius: '12px',
@@ -167,9 +167,9 @@ export default function KapasitasInfo() {
                       gap: '0.375rem',
                       padding: '0.5rem 1.125rem',
                       borderRadius: '8px',
-                      border: isActive ? '1.5px solid #BBF7D0' : '1.5px solid var(--border)',
-                      backgroundColor: isActive ? '#F0FDF4' : '#F8FAFC',
-                      color: isActive ? '#15803D' : 'var(--text-muted)',
+                      border: isActive ? '1.5px solid oklch(0.92 0.15 150 / 20%)' : '1.5px solid var(--border)',
+                      backgroundColor: isActive ? 'oklch(0.92 0.15 150 / 10%)' : 'var(--nav-active)',
+                      color: isActive ? '#16A34A' : 'var(--text-muted)',
                       fontWeight: isActive ? 700 : 400,
                       fontSize: '0.875rem',
                     }}
@@ -193,11 +193,11 @@ export default function KapasitasInfo() {
               style={{
                 marginTop: '1.25rem',
                 padding: '0.875rem 1rem',
-                backgroundColor: '#EEF2FF',
-                color: '#3730A3',
+                backgroundColor: 'var(--nav-active)',
+                color: 'var(--primary)',
                 borderRadius: '8px',
                 fontSize: '0.875rem',
-                border: '1px solid #E0E7FF',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.5rem',

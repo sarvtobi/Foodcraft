@@ -47,24 +47,29 @@ export default function BahanBakuList() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {bahanBakuList.length === 0 ? (
-            <div className="col-span-full p-8 text-center bg-white rounded-xl border border-dashed border-gray-200 text-gray-500">
-              Tidak ada data bahan baku yang dapat dilihat.
+            <div className="card flex-center" style={{ gridColumn: '1 / -1', padding: '5rem 2rem', textAlign: 'center', backgroundColor: 'transparent', border: '2px dashed var(--border)', boxShadow: 'none' }}>
+              <div style={{ color: 'var(--text-muted)' }}>
+                <Package size={48} style={{ marginBottom: '1rem', opacity: 0.4 }} />
+                <p>Tidak ada data bahan baku yang dapat dilihat.</p>
+              </div>
             </div>
           ) : (
             bahanBakuList.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl shrink-0">
-                    <Package size={20} />
+              <div key={item.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem', marginBottom: 0, transition: 'transform 0.2s, box-shadow 0.2s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-md)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; (e.currentTarget as HTMLDivElement).style.boxShadow = ''; }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', padding: '0.625rem', borderRadius: '12px', flexShrink: 0 }}>
+                    <Package size={22} />
                   </div>
-                  <h3 className="font-semibold text-gray-800 line-clamp-2 leading-tight" title={item.nama}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3 }} title={item.nama}>
                     {item.nama}
                   </h3>
                 </div>
-                <div className="pt-3 border-t border-gray-50">
-                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Stok Aktual</p>
-                  <div className="text-3xl font-bold text-gray-900 tracking-tight">
-                    {item.stok} <span className="text-base font-semibold text-gray-500">{item.satuan}</span>
+                <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Stok Aktual</p>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                    {item.stok} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>{item.satuan}</span>
                   </div>
                 </div>
               </div>
