@@ -107,7 +107,7 @@ export default function KapasitasManagement() {
           >
             <div
               style={{
-                backgroundColor: '#EEF2FF',
+                backgroundColor: 'var(--nav-active)',
                 color: 'var(--primary)',
                 padding: '0.75rem',
                 borderRadius: '12px',
@@ -136,7 +136,7 @@ export default function KapasitasManagement() {
           >
             <div
               style={{
-                backgroundColor: '#F0FDF4',
+                backgroundColor: 'oklch(0.92 0.15 150 / 10%)',
                 color: '#16A34A',
                 padding: '0.75rem',
                 borderRadius: '12px',
@@ -155,7 +155,7 @@ export default function KapasitasManagement() {
                     <span
                       key={h}
                       className="badge"
-                      style={{ backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #BBF7D0', fontWeight: 600 }}
+                      style={{ backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', border: '1px solid oklch(0.92 0.15 150 / 20%)', fontWeight: 600 }}
                     >
                       {h}
                     </span>
@@ -189,7 +189,7 @@ export default function KapasitasManagement() {
           <form onSubmit={handleSubmit}>
             {formError && <div className="alert alert-error">{formError}</div>}
             {successMsg && (
-              <div className="alert" style={{ backgroundColor: '#F0FDF4', color: '#166534', borderColor: '#BBF7D0' }}>
+              <div className="alert" style={{ backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', borderColor: 'oklch(0.92 0.15 150 / 20%)' }}>
                 {successMsg}
               </div>
             )}
@@ -237,7 +237,7 @@ export default function KapasitasManagement() {
                         padding: '0.5rem 1rem',
                         borderRadius: '8px',
                         border: isSelected ? '1.5px solid var(--primary)' : '1.5px solid var(--border)',
-                        backgroundColor: isSelected ? '#EEF2FF' : 'transparent',
+                        backgroundColor: isSelected ? 'var(--nav-active)' : 'transparent',
                         color: isSelected ? 'var(--primary)' : 'var(--text-muted)',
                         fontWeight: isSelected ? 600 : 400,
                         cursor: 'pointer',

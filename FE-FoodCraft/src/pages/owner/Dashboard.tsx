@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import {
   BarChart3, RefreshCw, ChevronLeft, ChevronRight,
   TrendingUp, TrendingDown, Clock, Package, Users,
-  AlertTriangle, CheckCircle2, Activity,
+  CheckCircle2, Calendar,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -79,14 +79,14 @@ function LineChart({ data, activeFilter }: { data: GrafikPoint[]; activeFilter: 
         const y = H - PAD - ((v / maxVal) * (H - PAD * 2));
         return (
           <g key={v}>
-            <line x1={PAD} x2={W - PAD} y1={y} y2={y} stroke="#E2E8F0" strokeWidth={1} />
-            <text x={PAD - 6} y={y + 4} textAnchor="end" fontSize={10} fill="#94A3B8">{v}</text>
+            <line x1={PAD} x2={W - PAD} y1={y} y2={y} stroke="var(--border)" strokeWidth={1} />
+            <text x={PAD - 6} y={y + 4} textAnchor="end" fontSize={10} fill="var(--text-muted)">{v}</text>
           </g>
         );
       })}
       {data.map((d, i) => {
         const x = PAD + (i / (data.length - 1)) * (W - PAD * 2);
-        return <text key={d.bulan} x={x} y={H - 8} textAnchor="middle" fontSize={10} fill="#94A3B8">{d.bulan}</text>;
+        return <text key={d.bulan} x={x} y={H - 8} textAnchor="middle" fontSize={10} fill="var(--text-muted)">{d.bulan}</text>;
       })}
 
       {(activeFilter === 'semua' || activeFilter === 'efisiensi') && (
@@ -116,7 +116,7 @@ function ProgressRing({ pct, color, size = 44 }: { pct: number; color: string; s
   const offset = circ - (Math.min(pct, 100) / 100) * circ;
   return (
     <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#E2E8F0" strokeWidth={5} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--border)" strokeWidth={5} />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={5}
         strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
         style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
@@ -130,15 +130,15 @@ function statusColor(s: string) {
   return '#16A34A';
 }
 function statusBg(s: string) {
-  if (s === 'Kritis') return '#FEE2E2';
-  if (s === 'Rendah') return '#FEF3C7';
-  return '#DCFCE7';
+  if (s === 'Kritis') return 'oklch(0.704 0.191 22.216 / 20%)';
+  if (s === 'Rendah') return 'oklch(0.792 0.142 54.832 / 20%)';
+  return 'oklch(0.627 0.194 149.214 / 20%)';
 }
 function progressColor(pct: number) {
-  if (pct >= 90) return '#16A34A';
-  if (pct >= 70) return '#0EA5E9';
+  if (pct >= 90) return 'var(--success)';
+  if (pct >= 70) return 'var(--primary)';
   if (pct >= 50) return '#D97706';
-  return '#DC2626';
+  return 'var(--danger)';
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -172,7 +172,7 @@ export default function OwnerDashboard() {
       trend: stat.total_output.trend_persen,
       isUp: stat.total_output.is_up,
       icon: <BarChart3 size={22} />,
-      iconBg: '#E0F2FE', iconColor: '#0284C7',
+      iconBg: 'var(--nav-active)', iconColor: '#0284C7',
     },
     {
       label: 'Rata-rata Tingkat Keterlambatan',
@@ -181,7 +181,7 @@ export default function OwnerDashboard() {
       trend: stat.tingkat_keterlambatan.trend_persen,
       isUp: stat.tingkat_keterlambatan.is_up,
       icon: <Clock size={22} />,
-      iconBg: '#FEF3C7', iconColor: '#D97706',
+      iconBg: 'var(--nav-active)', iconColor: '#D97706',
     },
     {
       label: 'Status Bahan Baku',
@@ -191,7 +191,7 @@ export default function OwnerDashboard() {
       trend: stat.status_bahan_baku.trend_persen,
       isUp: stat.status_bahan_baku.is_up,
       icon: <Package size={22} />,
-      iconBg: '#EDE9FE', iconColor: '#7C3AED',
+      iconBg: 'var(--nav-active)', iconColor: '#7C3AED',
     },
     {
       label: 'Mitra UMKM Aktif',
@@ -201,7 +201,7 @@ export default function OwnerDashboard() {
       isUp: stat.mitra_aktif.is_up,
       isTrendAbsolute: true,
       icon: <Users size={22} />,
-      iconBg: '#DCFCE7', iconColor: '#16A34A',
+      iconBg: 'var(--nav-active)', iconColor: '#16A34A',
     },
   ] : [];
 
@@ -232,10 +232,10 @@ export default function OwnerDashboard() {
           <ChevronLeft size={15} />
         </button>
         <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <Activity size={15} style={{ color: 'var(--primary)' }} />
+          <Calendar size={15} style={{ color: 'var(--primary)' }} />
           {getPeriodLabel(periode)}
           {periode === thisMonth && (
-            <span style={{ background: '#EEF2FF', color: 'var(--primary)', fontSize: '0.7rem', padding: '0.1rem 0.5rem', borderRadius: 999, border: '1px solid #C7D2FE', fontWeight: 600 }}>
+            <span style={{ background: 'var(--nav-active)', color: 'var(--primary)', fontSize: '0.7rem', padding: '0.1rem 0.5rem', borderRadius: 999, border: '1px solid var(--border)', fontWeight: 600 }}>
               Bulan ini
             </span>
           )}
@@ -308,7 +308,7 @@ export default function OwnerDashboard() {
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 {(['semua', 'efisiensi', 'kapasitas'] as const).map(f => (
                   <button key={f} onClick={() => setChartFilter(f)}
-                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.875rem', borderRadius: 6, border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600, background: chartFilter === f ? 'var(--primary)' : 'transparent', color: chartFilter === f ? '#fff' : 'var(--text-muted)', transition: 'all 0.2s' }}>
+                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.875rem', borderRadius: 6, border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600, background: chartFilter === f ? 'var(--primary)' : 'transparent', color: chartFilter === f ? 'var(--primary-foreground)' : 'var(--text-muted)', transition: 'all 0.2s' }}>
                     {f === 'semua' ? 'Semua' : f === 'efisiensi' ? 'Efisiensi' : 'Kapasitas'}
                   </button>
                 ))}
@@ -356,7 +356,7 @@ export default function OwnerDashboard() {
                   <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>{row.aktual.toLocaleString('id-ID')}</span>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{row.satuan}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 100 }}>
-                    <div style={{ flex: 1, height: 6, background: '#E2E8F0', borderRadius: 999, overflow: 'hidden' }}>
+                    <div style={{ flex: 1, height: 6, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.min(row.progress, 100)}%`, background: progressColor(row.progress), borderRadius: 999, transition: 'width 0.5s ease' }} />
                     </div>
                     <span style={{ fontSize: '0.78rem', fontWeight: 700, color: progressColor(row.progress), minWidth: 32 }}>

@@ -227,7 +227,7 @@ export default function ProdukManagement() {
                     </td>
                     <td>
                       {item.waktu_produksi != null && item.waktu_produksi > 0 ? (
-                        <span className="badge" style={{ backgroundColor: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                        <span className="badge" style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', border: '1px solid var(--border)' }}>
                           ⏱ {item.waktu_produksi} mnt
                         </span>
                       ) : (
@@ -235,7 +235,7 @@ export default function ProdukManagement() {
                       )}
                     </td>
                     <td>
-                      <span className="badge" style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0' }}>
+                      <span className="badge" style={{ backgroundColor: 'var(--nav-active)', color: 'var(--text-main)', border: '1px solid var(--border)' }}>
                         {item.resep?.length || 0} Bahan
                       </span>
                     </td>
@@ -389,7 +389,7 @@ export default function ProdukManagement() {
                 </h3>
                 
                 {(!selectedProduk?.resep || selectedProduk.resep.length === 0) ? (
-                  <div style={{ padding: '1.5rem', backgroundColor: '#F8FAFC', border: '1px dashed var(--border)', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                  <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-color)', border: '1px dashed var(--border)', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                     Belum ada bahan baku dalam resep ini.
                   </div>
                 ) : (
@@ -409,7 +409,7 @@ export default function ProdukManagement() {
                             {r.bahan_baku?.nama || `Bahan ID: ${r.bahan_baku_id}`}
                           </p>
                           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                            <span style={{ display: 'inline-block', backgroundColor: '#F1F5F9', padding: '0.125rem 0.5rem', borderRadius: '4px', fontWeight: 500, border: '1px solid #E2E8F0', color: '#475569' }}>
+                            <span style={{ display: 'inline-block', backgroundColor: 'var(--nav-active)', padding: '0.125rem 0.5rem', borderRadius: '4px', fontWeight: 500, border: '1px solid var(--border)', color: 'var(--text-main)' }}>
                               Total: {r.kuantitas} {r.bahan_baku?.satuan || 'unit'}
                             </span>
                           </p>
@@ -444,8 +444,8 @@ export default function ProdukManagement() {
               <hr style={{ borderColor: 'var(--border)', margin: 0 }} />
 
               {/* Form Tambah Bahan ke Resep */}
-              <form onSubmit={handleAddResep} style={{ backgroundColor: '#EEF2FF', padding: '1rem', borderRadius: 'var(--radius)', border: '1px solid #E0E7FF' }}>
-                <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#3730A3', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <form onSubmit={handleAddResep} style={{ backgroundColor: 'var(--nav-active)', padding: '1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Plus size={16} /> Tambah Bahan Baku Baru
                 </h3>
                 

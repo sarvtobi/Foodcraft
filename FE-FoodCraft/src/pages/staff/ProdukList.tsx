@@ -80,7 +80,7 @@ export default function ProdukList() {
                       {item.deskripsi || 'Tidak ada deskripsi'}
                     </p>
                   </div>
-                  <div style={{ backgroundColor: '#EEF2FF', color: 'var(--primary)', padding: '0.625rem', borderRadius: '12px', flexShrink: 0 }}>
+                  <div style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', padding: '0.625rem', borderRadius: '12px', flexShrink: 0 }}>
                     <ShoppingBag size={20} />
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export default function ProdukList() {
                   <button
                     onClick={() => openResepModal(item)}
                     className="btn btn-outline"
-                    style={{ width: '100%', display: 'flex', gap: '0.5rem', color: 'var(--primary)', borderColor: '#E0E7FF' }}
+                    style={{ width: '100%', display: 'flex', gap: '0.5rem', color: 'var(--primary)', borderColor: 'var(--border)' }}
                   >
                     <List size={18} /> Lihat Resep Persiapan
                   </button>
@@ -112,12 +112,12 @@ export default function ProdukList() {
 
             <div>
               {(!selectedProduk?.resep || selectedProduk.resep.length === 0) ? (
-                <div style={{ padding: '1.5rem', backgroundColor: '#F8FAFC', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--text-muted)' }}>
+                <div style={{ padding: '1.5rem', backgroundColor: 'var(--bg-color)', borderRadius: 'var(--radius)', border: '1px dashed var(--border)', textAlign: 'center', color: 'var(--text-muted)' }}>
                   Produk ini belum memiliki daftar resep (BOM).
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div style={{ backgroundColor: '#EEF2FF', color: '#3730A3', padding: '0.75rem', borderRadius: '8px', fontSize: '0.875rem', border: '1px solid #E0E7FF' }}>
+                  <div style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.875rem', border: '1px solid var(--border)' }}>
                     Gunakan takaran di bawah ini untuk persiapan produksi 1 unit <strong style={{ fontWeight: 600 }}>{selectedProduk.nama}</strong>.
                   </div>
                   <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
@@ -133,7 +133,7 @@ export default function ProdukList() {
                         <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>
                           {r.bahan_baku?.nama || `Bahan ID: ${r.bahan_baku_id}`}
                         </span>
-                        <span className="badge" style={{ backgroundColor: '#F1F5F9', border: '1px solid #E2E8F0', color: '#475569' }}>
+                        <span className="badge" style={{ backgroundColor: 'var(--nav-active)', border: '1px solid var(--border)', color: 'var(--text-main)' }}>
                           {r.kuantitas} {r.bahan_baku?.satuan}
                         </span>
                       </div>
