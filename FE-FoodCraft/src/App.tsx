@@ -10,6 +10,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminUserManagement from './pages/admin/UserManagement';
 import ActivityLogs from './pages/admin/ActivityLogs';
 import ApiRequestLogs from './pages/admin/ApiRequestLogs';
+import SystemErrors from './pages/admin/SystemErrors';
 
 import OwnerDashboard from './pages/owner/Dashboard';
 import UMKMManagement from './pages/owner/UMKMManagement';
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/admin/users" element={<AdminUserManagement />} />
                 <Route path="/admin/activity-logs" element={<ActivityLogs />} />
                 <Route path="/admin/api-logs" element={<ApiRequestLogs />} />
+                <Route path="/admin/system-errors" element={<SystemErrors />} />
               </Route>
 
               {/* Owner Routes */}

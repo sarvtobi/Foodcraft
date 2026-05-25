@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3, ShieldCheck, History, Activity } from 'lucide-react';
+import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3, ShieldCheck, History, Activity, Bug } from 'lucide-react';
 import ProfileUpdateModal from './ProfileUpdateModal';
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler';
 
@@ -24,6 +24,7 @@ export const Layout = () => {
           { name: 'Manajemen User', to: '/admin/users', icon: <Users size={20} /> },
           { name: 'Log Aktivitas', to: '/admin/activity-logs', icon: <ShieldCheck size={20} /> },
           { name: 'Monitoring API', to: '/admin/api-logs', icon: <Activity size={20} /> },
+          { name: 'Monitoring Error', to: '/admin/system-errors', icon: <Bug size={20} /> },
         ];
       case 'owner':
         return [

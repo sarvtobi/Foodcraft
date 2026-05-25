@@ -67,6 +67,51 @@ return Application::configure(basePath: dirname(__DIR__))
                     $message = 'Server Error.';
                 }
 
+                if ($statusCode === 500) {
+                    try {
+                        $trace = collect($e->getTrace())->take(15)->map(function ($trace) {
+                            return ($trace['file'] ?? 'unknown') . ':' . ($trace['line'] ?? 'unknown') . ' (' . ($trace['function'] ?? 'unknown') . ')';
+                        })->toArray();
+
+                        $sensitiveKeys = ['password', 'password_confirmation', 'token', 'access_token', 'new_password', 'current_password'];
+                        $payload = request()->all();
+                        
+                        $maskData = function ($data) use (&$maskData, $sensitiveKeys) {
+                            if (!is_array($data)) return $data;
+                            foreach ($data as $k => $v) {
+                                if (is_array($v)) {
+                                    $data[$k] = $maskData($v);
+                                } elseif (in_array(strtolower($k), $sensitiveKeys, true)) {
+                                    $data[$k] = '[FILTERED]';
+                                } elseif ($v instanceof \Illuminate\Http\UploadedFile) {
+                                    $data[$k] = '[FILE: ' . $v->getClientOriginalName() . ']';
+                                }
+                            }
+                            return $data;
+                        };
+                        $payload = $maskData($payload);
+
+                        \App\Models\SystemError::create([
+                            'user_id' => request()->user()?->id,
+                            'ip_address' => request()->ip() ?? 'unknown',
+                            'method' => request()->method(),
+                            'url' => request()->fullUrl(),
+                            'exception_class' => get_class($e),
+                            'message' => $e->getMessage() ?: 'No message available',
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                            'trace' => $trace,
+                            'payload' => empty($payload) ? null : $payload,
+                            'resolved' => false,
+                        ]);
+                    } catch (\Throwable $logError) {
+                        logger()->error('Failed to save System Error: ' . $logError->getMessage(), [
+                            'original_exception' => $e,
+                            'logging_exception' => $logError,
+                        ]);
+                    }
+                }
+
                 $errors = null;
                 if (config('app.debug')) {
                     $errors = [

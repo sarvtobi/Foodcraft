@@ -14,6 +14,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ApiRequestLogController;
+use App\Http\Controllers\SystemErrorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,6 +50,11 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Log API Requests
         Route::get('/admin/api-logs', [ApiRequestLogController::class, 'index']);
+
+        // System Error Monitoring
+        Route::get('/admin/system-errors', [SystemErrorController::class, 'index']);
+        Route::put('/admin/system-errors/{id}/resolve', [SystemErrorController::class, 'resolve']);
+        Route::delete('/admin/system-errors/{id}', [SystemErrorController::class, 'destroy']);
     });
 
     // Owner routes

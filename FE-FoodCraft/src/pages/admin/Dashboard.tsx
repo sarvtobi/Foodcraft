@@ -43,7 +43,8 @@ export default function AdminDashboard() {
   const metrics = [
     { label: 'Total Pengguna', value: data?.total_users ?? 0, icon: <Users size={24} />, color: 'var(--primary)', bg: 'var(--nav-active)', path: '/admin/users' },
     { label: 'Total Owner UMKM', value: data?.total_owners ?? 0, icon: <ShieldCheck size={24} />, color: '#16A34A', bg: 'oklch(0.92 0.15 150 / 10%)', path: '/admin/users' },
-    { label: 'API Traffic (Logs)', value: data?.total_api_logs ?? 'Live', icon: <Activity size={24} />, color: '#0EA5E9', bg: 'oklch(0.5 0.2 260 / 10%)', path: '/admin/api-logs' },
+    { label: 'API Traffic', value: data?.total_api_logs ?? 'Live', icon: <Activity size={24} />, color: '#0EA5E9', bg: 'oklch(0.5 0.2 260 / 10%)', path: '/admin/api-logs' },
+    { label: 'System Errors', value: data?.total_errors ?? 0, icon: <Bug size={24} />, color: '#DC2626', bg: 'oklch(0.704 0.191 22.216 / 10%)', path: '/admin/system-errors' },
   ];
 
   return (
