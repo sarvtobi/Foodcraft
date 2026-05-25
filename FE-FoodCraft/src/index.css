@@ -666,8 +666,8 @@ tr:hover td {
 .flex-center {
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  align-items: center;
+  min-height: 200px;
 }
 
 /* Modals */

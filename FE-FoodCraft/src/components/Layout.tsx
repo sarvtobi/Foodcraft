@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3 } from 'lucide-react';
+import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3, ShieldCheck, History } from 'lucide-react';
 import ProfileUpdateModal from './ProfileUpdateModal';
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler';
 
@@ -22,6 +22,7 @@ export const Layout = () => {
         return [
           { name: 'Dashboard Admin', to: '/admin/dashboard', icon: <Home size={20} /> },
           { name: 'Manajemen User', to: '/admin/users', icon: <Users size={20} /> },
+          { name: 'Log Aktivitas', to: '/admin/activity-logs', icon: <ShieldCheck size={20} /> },
         ];
       case 'owner':
         return [
@@ -33,6 +34,7 @@ export const Layout = () => {
           { name: 'Manajemen UMKM', to: '/owner/umkm', icon: <Store size={20} /> },
           { name: 'Produk & Resep', to: '/owner/produk', icon: <ShoppingBag size={20} /> },
           { name: 'Manajemen Staff', to: '/owner/staff', icon: <Users size={20} /> },
+          { name: 'Log Aktivitas', to: '/owner/activity-logs', icon: <History size={20} /> },
         ];
       case 'staff':
         return [
@@ -42,6 +44,7 @@ export const Layout = () => {
           { name: 'Info Kapasitas', to: '/staff/kapasitas', icon: <Timer size={20} /> },
           { name: 'Pesanan', to: '/staff/pesanan', icon: <ClipboardList size={20} /> },
           { name: 'Jadwal Produksi', to: '/staff/jadwal-produksi', icon: <ChefHat size={20} /> },
+          { name: 'Log Aktivitas', to: '/staff/activity-logs', icon: <History size={20} /> },
         ];
       default:
         return [];
@@ -89,8 +92,8 @@ export const Layout = () => {
             <div className="user-profile">
               <div className="avatar">{user?.name?.charAt(0).toUpperCase() || 'U'}</div>
               <div className="user-info">
-                <span className="user-name">{user?.name}</span>
-                <span className="user-role">{user?.role?.replace('_', ' ')}</span>
+                <span className="user-name">{user?.name || 'User'}</span>
+                <span className="user-role">{(user?.role || 'Guest').replace('_', ' ')}</span>
               </div>
             </div>
             <AnimatedThemeToggler className="mr-2" />

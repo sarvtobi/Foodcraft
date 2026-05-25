@@ -8,6 +8,7 @@ import AuthPage from './pages/auth/AuthPage';
 
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminUserManagement from './pages/admin/UserManagement';
+import ActivityLogs from './pages/admin/ActivityLogs';
 
 import OwnerDashboard from './pages/owner/Dashboard';
 import UMKMManagement from './pages/owner/UMKMManagement';
@@ -18,6 +19,8 @@ import ProdukManagement from './pages/owner/ProdukManagement';
 import StaffDashboard from './pages/staff/Dashboard';
 import StaffBahanBakuList from './pages/staff/BahanBakuList';
 import StaffProdukList from './pages/staff/ProdukList';
+import OwnerActivityLogs from './pages/owner/ActivityLogs';
+import StaffActivityLogs from './pages/staff/ActivityLogs';
 import KapasitasManagement from './pages/owner/KapasitasManagement';
 import KapasitasInfo from './pages/staff/KapasitasInfo';
 import PesananManagement from './pages/PesananManagement';
@@ -40,6 +43,7 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={['super_admin']} />}>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/users" element={<AdminUserManagement />} />
+                <Route path="/admin/activity-logs" element={<ActivityLogs />} />
               </Route>
 
               {/* Owner Routes */}
@@ -52,6 +56,7 @@ function App() {
                 <Route path="/owner/kapasitas" element={<KapasitasManagement />} />
                 <Route path="/owner/pesanan" element={<PesananManagement />} />
                 <Route path="/owner/jadwal-produksi" element={<JadwalProduksi />} />
+                <Route path="/owner/activity-logs" element={<OwnerActivityLogs />} />
                 <Route path="/owner/analitik" element={<Navigate to="/owner/dashboard" replace />} />
               </Route>
 
@@ -63,6 +68,7 @@ function App() {
                 <Route path="/staff/kapasitas" element={<KapasitasInfo />} />
                 <Route path="/staff/pesanan" element={<PesananManagement />} />
                 <Route path="/staff/jadwal-produksi" element={<JadwalProduksi />} />
+                <Route path="/staff/activity-logs" element={<StaffActivityLogs />} />
               </Route>
             </Route>
           </Route>

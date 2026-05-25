@@ -12,6 +12,7 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ResepProdukController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UmkmController;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'indexUsers']);
         Route::put('/admin/users/{id}', [AdminController::class, 'updateOwner']);
         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteOwner']);
+        
+        // Log Aktivitas
+        Route::get('/admin/activity-logs', [ActivityLogController::class, 'adminLoginLogs']);
     });
 
     // Owner routes
@@ -83,6 +87,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Modul 5: Analitik Dasbor
         Route::get('/owner/dasbor-analitik', [AnalisisController::class, 'index']);
+        
+        // Log Aktivitas UMKM
+        Route::get('/owner/activity-logs', [ActivityLogController::class, 'ownerLogs']);
     });
 
     // Pesanan routes (Owner & Staff)
@@ -108,5 +115,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/staff/produk', [ProdukController::class, 'index']);
         Route::get('/staff/produk/{id}', [ProdukController::class, 'show']);
         Route::get('/staff/kapasitas', [KapasitasController::class, 'show']);
+        
+        // Log Aktivitas UMKM
+        Route::get('/staff/activity-logs', [ActivityLogController::class, 'staffLogs']);
     });
 });
