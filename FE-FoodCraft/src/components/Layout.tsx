@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3 } from 'lucide-react';
 import ProfileUpdateModal from './ProfileUpdateModal';
+import { AnimatedThemeToggler } from './ui/animated-theme-toggler';
 
 export const Layout = () => {
   const { user, logout } = useAuth();
@@ -92,6 +93,7 @@ export const Layout = () => {
                 <span className="user-role">{user?.role?.replace('_', ' ')}</span>
               </div>
             </div>
+            <AnimatedThemeToggler className="mr-2" />
             <button onClick={() => setIsProfileModalOpen(true)} className="logout-btn" style={{ marginRight: '8px' }} title="Update Profile">
               <Settings size={18} />
             </button>

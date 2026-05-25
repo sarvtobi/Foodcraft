@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
-import { Plus, X, Edit, Trash2, Users } from 'lucide-react';
+import { Plus, X, Edit, Trash2, Users, Eye, EyeOff } from 'lucide-react';
 
 interface Staff {
   id: number;
@@ -26,6 +26,7 @@ export default function StaffManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [currentStaffId, setCurrentStaffId] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -160,7 +161,7 @@ export default function StaffManagement() {
                     <td style={{ fontWeight: 500 }}>{staff.name}</td>
                     <td>{staff.email}</td>
                     <td>
-                      <span className="badge badge-primary">
+                      <span className="badge" style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', border: '1px solid var(--border)' }}>
                         UMKM {staff.umkm_id}
                       </span>
                     </td>
@@ -215,15 +216,37 @@ export default function StaffManagement() {
               </div>
               <div className="form-group">
                 <label>Password {modalMode === 'edit' && <span style={{fontSize: '0.75rem', fontWeight:'normal', color:'var(--text-muted)'}}>(Kosongkan jika tidak ingin diubah)</span>}</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  required={modalMode === 'create'}
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="form-control"
+                    required={modalMode === 'create'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    style={{ paddingRight: '2.5rem' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '0.75rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label>Tugaskan ke UMKM</label>
                 <select 
                   className="form-control" 
@@ -236,7 +259,7 @@ export default function StaffManagement() {
                     <option key={umkm.id} value={umkm.id}>{umkm.name}</option>
                   ))}
                 </select>
-              </div>
+              </div> */}
               
               <div className="modal-footer">
                 <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Batal</button>

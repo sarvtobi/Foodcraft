@@ -10,7 +10,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [isLogin, setIsLogin] = useState(location.pathname === '/login');
+  const isLogin = location.pathname === '/login';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,7 +24,6 @@ export default function AuthPage() {
   });
 
   useEffect(() => {
-    setIsLogin(location.pathname === '/login');
     setError('');
     setSuccess('');
     setShowPassword(false);
@@ -72,6 +71,7 @@ export default function AuthPage() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        password_confirmation: formData.confirmPassword,
       });
       setSuccess('Registrasi berhasil! Mengarahkan ke login...');
       setTimeout(() => navigate('/login'), 2000);
@@ -189,10 +189,10 @@ export default function AuthPage() {
   const RegisterForm = (
     <div className="flex flex-col justify-center h-full px-10 lg:px-14 py-10">
       {/* Logo */}
-      <div className="flex items-center gap-2 mb-8">
+      {/* <div className="flex items-center gap-2 mb-8">
         <AnimatedLogo size={40} />
         <span className="font-bold text-lg tracking-tight">FoodCraft</span>
-      </div>
+      </div> */}
 
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Buat Akun Baru</h1>
       <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
@@ -273,6 +273,24 @@ export default function AuthPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               )}
             </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Konfirmasi Password</label>
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input
+              id="confirmPassword"
+              type={showPassword ? 'text' : 'password'}
+              required
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm"
+            />
           </div>
         </div>
 
@@ -376,135 +394,78 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
-      <div className="relative w-full max-w-4xl h-[580px] bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700/50 flex flex-col md:flex-row">
+      <div className="relative w-full max-w-4xl h-[600px] md:h-[580px] bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700/50 flex flex-col md:flex-row">
 
         {/* ── MOBILE VIEW ── */}
-        <div className="md:hidden w-full">
+        <div className="md:hidden w-full h-full flex flex-col bg-white dark:bg-gray-900">
           {/* Image banner on mobile */}
-          <div className="h-48 w-full overflow-hidden">
-            {isLogin ? (
-              <img src="/img/content/login-content.png" alt="Login" className="w-full h-full object-cover" />
-            ) : (
-              <img src="/img/content/register-content.png" alt="Register" className="w-full h-full object-cover" />
-            )}
+          <div className="h-40 w-full overflow-hidden relative flex-shrink-0">
+            <AnimatePresence mode="popLayout">
+              <motion.img
+                key={isLogin ? 'login-img-m' : 'reg-img-m'}
+                src={isLogin ? "/img/content/login-content.png" : "/img/content/register-content.png"}
+                alt="Auth"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="w-full h-full object-cover absolute inset-0"
+              />
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
-          <AnimatePresence mode="wait">
-            {isLogin ? (
-              <motion.div key="login-m" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                {LoginForm}
+
+          <div className="flex-1 relative overflow-y-auto">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={isLogin ? 'login-form-m' : 'reg-form-m'}
+                initial={{ opacity: 0, x: isLogin ? -20 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: isLogin ? 20 : -20 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="w-full h-full"
+              >
+                {isLogin ? LoginForm : RegisterForm}
               </motion.div>
-            ) : (
-              <motion.div key="register-m" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                {RegisterForm}
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* ── DESKTOP VIEW ── */}
-        <div className="hidden md:flex w-full h-full">
+        <div className="hidden md:flex w-full h-full relative">
 
-          {/* 
-            Both forms always rendered (left/right slots).
-            The image panel slides over them.
-
-            LOGIN state  → image on RIGHT  → left slot shows login form
-            REGISTER state → image on LEFT → right slot shows register form
-          */}
-
-          {/* LEFT SLOT */}
-          <div className="w-1/2 flex-shrink-0 h-full relative">
-            <AnimatePresence mode="wait">
-              {isLogin ? (
-                <motion.div
-                  key="login-form"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, delay: 0.3 }}
-                  className="absolute inset-0"
-                >
-                  {LoginForm}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="register-img"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, delay: 0.3 }}
-                  className="absolute inset-0"
-                >
-                  {RegisterImagePanel}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* LEFT SLOT: Always Login Form */}
+          <div className="w-1/2 h-full">
+            {LoginForm}
           </div>
 
-          {/* RIGHT SLOT */}
-          <div className="w-1/2 flex-shrink-0 h-full relative">
-            <AnimatePresence mode="wait">
-              {isLogin ? (
-                <motion.div
-                  key="login-img"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, delay: 0.3 }}
-                  className="absolute inset-0"
-                >
-                  {LoginImagePanel}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="register-form"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, delay: 0.3 }}
-                  className="absolute inset-0"
-                >
-                  {RegisterForm}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* RIGHT SLOT: Always Register Form */}
+          <div className="w-1/2 h-full">
+            {RegisterForm}
           </div>
 
           {/* ── SLIDING IMAGE OVERLAY ─────────────────────────────────────────
               This panel slides on top of the above slots.
-              LOGIN  → starts at right (left: 50%)
-              REGISTER → slides to left (left: 0%)
+              LOGIN  → covers Right side (starts at left: 50%)
+              REGISTER → covers Left side (slides to left: 0%)
           ─────────────────────────────────────────────────────────────────── */}
           <motion.div
             initial={false}
-            animate={{ left: isLogin ? '50%' : '0%' }}
-            transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
-            className="absolute top-0 w-1/2 h-full z-20"
+            animate={{ x: isLogin ? '0%' : '-100%' }}
+            transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
+            className="absolute top-0 left-1/2 w-1/2 h-full z-20 shadow-2xl overflow-hidden bg-white dark:bg-gray-900"
           >
-            <AnimatePresence mode="wait">
-              {isLogin ? (
-                <motion.div
-                  key="slide-login"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-full h-full"
-                >
-                  {LoginImagePanel}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="slide-register"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-full h-full"
-                >
-                  {RegisterImagePanel}
-                </motion.div>
-              )}
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={isLogin ? 'slide-login' : 'slide-register'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="w-full h-full"
+              >
+                {isLogin ? LoginImagePanel : RegisterImagePanel}
+              </motion.div>
             </AnimatePresence>
           </motion.div>
 

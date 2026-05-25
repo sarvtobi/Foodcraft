@@ -23,23 +23,23 @@ import { useAuth } from '../contexts/AuthContext';
 const PRIORITAS_CONFIG = {
   tinggi: {
     label: 'Tinggi',
-    bg: '#FEF2F2',
+    bg: 'oklch(0.704 0.191 22.216 / 10%)',
     color: '#DC2626',
-    border: '#FECACA',
+    border: 'oklch(0.704 0.191 22.216 / 20%)',
     dot: '#EF4444',
   },
   sedang: {
     label: 'Sedang',
-    bg: '#FFFBEB',
+    bg: 'oklch(0.895 0.147 85.34 / 10%)',
     color: '#D97706',
-    border: '#FDE68A',
+    border: 'oklch(0.895 0.147 85.34 / 20%)',
     dot: '#F59E0B',
   },
   rendah: {
     label: 'Rendah',
-    bg: '#F0FDF4',
+    bg: 'oklch(0.92 0.15 150 / 10%)',
     color: '#16A34A',
-    border: '#BBF7D0',
+    border: 'oklch(0.92 0.15 150 / 20%)',
     dot: '#22C55E',
   },
 } as const;
@@ -50,30 +50,30 @@ const STATUS_CONFIG: Record<
 > = {
   pending: {
     label: 'Pending',
-    bg: '#F8FAFC',
-    color: '#64748B',
-    border: '#E2E8F0',
+    bg: 'var(--nav-active)',
+    color: 'var(--text-muted)',
+    border: 'var(--border)',
     icon: <Clock size={13} />,
   },
   diproses: {
     label: 'Diproses',
-    bg: '#EEF2FF',
-    color: '#4338CA',
-    border: '#C7D2FE',
+    bg: 'oklch(0.5 0.2 260 / 10%)',
+    color: 'var(--primary)',
+    border: 'oklch(0.5 0.2 260 / 20%)',
     icon: <Loader2 size={13} />,
   },
   selesai: {
     label: 'Selesai',
-    bg: '#F0FDF4',
+    bg: 'oklch(0.92 0.15 150 / 10%)',
     color: '#16A34A',
-    border: '#BBF7D0',
+    border: 'oklch(0.92 0.15 150 / 20%)',
     icon: <CheckCircle2 size={13} />,
   },
   dibatalkan: {
     label: 'Dibatalkan',
-    bg: '#FEF2F2',
+    bg: 'oklch(0.704 0.191 22.216 / 10%)',
     color: '#DC2626',
-    border: '#FECACA',
+    border: 'oklch(0.704 0.191 22.216 / 20%)',
     icon: <XCircle size={13} />,
   },
 };
@@ -270,9 +270,9 @@ export default function PesananManagement() {
   // ── Deadline badge helper ──────────────────────────────────────────────────
   const DeadlineBadge = ({ dateStr }: { dateStr: string }) => {
     const sisa = hariTersisa(dateStr);
-    const color = sisa <= 2 ? '#DC2626' : sisa <= 7 ? '#D97706' : '#475569';
-    const bg = sisa <= 2 ? '#FEF2F2' : sisa <= 7 ? '#FFFBEB' : '#F1F5F9';
-    const border = sisa <= 2 ? '#FECACA' : sisa <= 7 ? '#FDE68A' : '#E2E8F0';
+    const color = sisa <= 2 ? '#DC2626' : sisa <= 7 ? '#D97706' : 'var(--text-muted)';
+    const bg = sisa <= 2 ? 'oklch(0.704 0.191 22.216 / 10%)' : sisa <= 7 ? 'oklch(0.895 0.147 85.34 / 10%)' : 'var(--nav-active)';
+    const border = sisa <= 2 ? 'oklch(0.704 0.191 22.216 / 20%)' : sisa <= 7 ? 'oklch(0.895 0.147 85.34 / 20%)' : 'var(--border)';
     return (
       <span
         style={{
@@ -585,7 +585,7 @@ export default function PesananManagement() {
                           gap: '0.5rem',
                           alignItems: 'center',
                           padding: '0.75rem',
-                          backgroundColor: '#F8FAFC',
+                          backgroundColor: 'var(--nav-active)',
                           borderRadius: '8px',
                           border: '1px solid var(--border)',
                         }}
@@ -774,7 +774,7 @@ export default function PesananManagement() {
                     <div
                       key={label}
                       style={{
-                        backgroundColor: '#F8FAFC',
+                        backgroundColor: 'var(--nav-active)',
                         borderRadius: '8px',
                         padding: '0.75rem',
                         border: '1px solid var(--border)',
@@ -884,7 +884,7 @@ export default function PesananManagement() {
                             display: 'flex',
                             justifyContent: 'space-between',
                             padding: '0.75rem 1rem',
-                            backgroundColor: '#F0FDF4',
+                            backgroundColor: 'oklch(0.92 0.15 150 / 10%)',
                             borderTop: '1px solid var(--border)',
                           }}
                         >
