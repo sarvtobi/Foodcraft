@@ -34,6 +34,7 @@ export default function StaffManagement() {
     password: '',
     umkm_id: ''
   });
+  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
 
   const fetchData = async () => {
     try {
@@ -102,6 +103,7 @@ export default function StaffManagement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
     
     try {
       if (modalMode === 'create') {
@@ -120,7 +122,8 @@ export default function StaffManagement() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${modalMode === 'create' ? 'create' : 'update'} staff`);
+      setError(err.message || `Gagal ${modalMode === 'create' ? 'menambahkan' : 'memperbarui'} staff`);
+      if (err.errors) setValidationErrors(err.errors);
     }
   };
 
@@ -198,28 +201,30 @@ export default function StaffManagement() {
                 <label>Nama Lengkap</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${validationErrors.name ? 'border-red-500' : ''}`}
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
+                {validationErrors.name && <p className="mt-1 text-xs text-red-600">{validationErrors.name[0]}</p>}
               </div>
               <div className="form-group">
                 <label>Email</label>
                 <input
                   type="email"
-                  className="form-control"
+                  className={`form-control ${validationErrors.email ? 'border-red-500' : ''}`}
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
+                {validationErrors.email && <p className="mt-1 text-xs text-red-600">{validationErrors.email[0]}</p>}
               </div>
               <div className="form-group">
                 <label>Password {modalMode === 'edit' && <span style={{fontSize: '0.75rem', fontWeight:'normal', color:'var(--text-muted)'}}>(Kosongkan jika tidak ingin diubah)</span>}</label>
                 <div style={{ position: 'relative' }}>
                   <input
                     type={showPassword ? "text" : "password"}
-                    className="form-control"
+                    className={`form-control ${validationErrors.password ? 'border-red-500' : ''}`}
                     required={modalMode === 'create'}
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -245,6 +250,7 @@ export default function StaffManagement() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                {validationErrors.password && <p className="mt-1 text-xs text-red-600">{validationErrors.password[0]}</p>}
               </div>
               {/* <div className="form-group">
                 <label>Tugaskan ke UMKM</label>

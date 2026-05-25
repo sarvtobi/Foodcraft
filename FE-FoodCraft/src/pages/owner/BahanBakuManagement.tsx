@@ -22,6 +22,7 @@ export default function BahanBakuManagement() {
     stok: 0,
     stok_minimum: 0
   });
+  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,6 +71,7 @@ export default function BahanBakuManagement() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFormError('');
+    setValidationErrors({});
     setIsSubmitting(true);
     
     try {
@@ -95,7 +97,8 @@ export default function BahanBakuManagement() {
       setIsFormModalOpen(false);
       fetchBahanBaku();
     } catch (err: any) {
-      setFormError(err.response?.data?.message || `Gagal ${modalMode === 'create' ? 'menambah' : 'menyimpan'} bahan baku`);
+      setFormError(err.message || `Gagal ${modalMode === 'create' ? 'menambah' : 'menyimpan'} bahan baku`);
+      if (err.errors) setValidationErrors(err.errors);
     } finally {
       setIsSubmitting(false);
     }
@@ -199,55 +202,59 @@ export default function BahanBakuManagement() {
             <form onSubmit={handleSubmit}>
               {formError && <div className="alert alert-error">{formError}</div>}
               
+            <div className="form-group">
+              <label>Nama Bahan Baku</label>
+              <input
+                type="text"
+                className={`form-control ${validationErrors.nama ? 'border-red-500' : ''}`}
+                required
+                value={formData.nama}
+                onChange={e => setFormData({ ...formData, nama: e.target.value })}
+                placeholder="Contoh: Tepung Terigu"
+              />
+              {validationErrors.nama && <p className="mt-1 text-xs text-red-600">{validationErrors.nama[0]}</p>}
+            </div>
+            <div className="form-group">
+              <label>Satuan</label>
+              <input
+                type="text"
+                className={`form-control ${validationErrors.satuan ? 'border-red-500' : ''}`}
+                required
+                value={formData.satuan}
+                onChange={e => setFormData({ ...formData, satuan: e.target.value })}
+                placeholder="Contoh: Kilogram (kg)"
+              />
+              {validationErrors.satuan && <p className="mt-1 text-xs text-red-600">{validationErrors.satuan[0]}</p>}
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="form-group">
-                <label>Nama Bahan Baku</label>
+                <label>Stok Awal</label>
                 <input
-                  type="text"
-                  className="form-control"
+                  type="number"
+                  min="0"
+                  step="any"
                   required
-                  value={formData.nama}
-                  onChange={e => setFormData({ ...formData, nama: e.target.value })}
-                  placeholder="Contoh: Tepung Terigu"
+                  value={formData.stok}
+                  onChange={e => setFormData({ ...formData, stok: Number(e.target.value) })}
+                  className={`form-control ${validationErrors.stok ? 'border-red-500' : ''}`}
                 />
+                {validationErrors.stok && <p className="mt-1 text-xs text-red-600">{validationErrors.stok[0]}</p>}
               </div>
               <div className="form-group">
-                <label>Satuan</label>
+                <label>Stok Minimum</label>
                 <input
-                  type="text"
-                  className="form-control"
+                  type="number"
+                  min="0"
+                  step="any"
                   required
-                  value={formData.satuan}
-                  onChange={e => setFormData({ ...formData, satuan: e.target.value })}
-                  placeholder="Contoh: Kilogram (kg)"
+                  value={formData.stok_minimum}
+                  onChange={e => setFormData({ ...formData, stok_minimum: Number(e.target.value) })}
+                  className={`form-control ${validationErrors.stok_minimum ? 'border-red-500' : ''}`}
                 />
+                {validationErrors.stok_minimum && <p className="mt-1 text-xs text-red-600">{validationErrors.stok_minimum[0]}</p>}
               </div>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label>Stok Awal</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    required
-                    value={formData.stok}
-                    onChange={e => setFormData({ ...formData, stok: Number(e.target.value) })}
-                    className="form-control"
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label>Stok Minimum</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    required
-                    value={formData.stok_minimum}
-                    onChange={e => setFormData({ ...formData, stok_minimum: Number(e.target.value) })}
-                    className="form-control"
-                  />
-                </div>
-              </div>
+            </div>
               
               <div className="modal-footer">
                 <button type="button" className="btn btn-outline" onClick={() => setIsFormModalOpen(false)}>Batal</button>

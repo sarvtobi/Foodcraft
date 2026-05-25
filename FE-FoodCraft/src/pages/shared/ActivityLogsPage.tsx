@@ -53,7 +53,7 @@ export default function ActivityLogsPage({ apiPath, title, subtitle }: ActivityL
         total: data.total
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mengambil log aktivitas');
+      setError(err.message || 'Gagal mengambil log aktivitas');
     } finally {
       setIsLoading(false);
     }
