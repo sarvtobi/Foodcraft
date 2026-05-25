@@ -58,7 +58,7 @@ export default function StaffDashboard() {
   }
 
   const quickActions = [
-    { label: 'Antrian Masak', icon: <ChefHat size={22} />, path: '/staff/jadwal', color: 'var(--primary)' },
+    { label: 'Antrian Masak', icon: <ChefHat size={22} />, path: '/staff/jadwal-produksi', color: 'var(--primary)' },
     { label: 'Stok Bahan', icon: <Package size={22} />, path: '/staff/bahan-baku', color: '#0EA5E9' },
     { label: 'Daftar Produk', icon: <ShoppingBag size={22} />, path: '/staff/produk', color: '#8B5CF6' },
   ];
@@ -132,7 +132,7 @@ export default function StaffDashboard() {
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>Antrian Masak Hari Ini</h3>
-              <Link to="/staff/jadwal" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Link to="/staff/jadwal-produksi" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 Lihat Semua <ChevronRight size={14} />
               </Link>
             </div>
@@ -152,10 +152,10 @@ export default function StaffDashboard() {
                           <div style={{ minWidth: 0 }}>
                             <h4 style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{products}</h4>
                             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Porsi: <strong>{totalQty} unit</strong> · {item.pesanan?.pelanggan || 'Pelanggan'}</p>
-                          </div>
-                        </div>
-                        {/* {item.terlambat && <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#DC2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase' }}>Kritis</span>} */}
-                      </div>
+                            </div>
+                            </div>
+                            </div>
+
                     );
                   })}
                 </div>

@@ -17,6 +17,7 @@ export default function UserManagement() {
 
   // Form State
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,6 +55,7 @@ export default function UserManagement() {
     if (!selectedUser) return;
     
     setFormError('');
+    setValidationErrors({});
     setIsSubmitting(true);
     try {
       const payload: any = { name: formData.name, email: formData.email };
@@ -63,7 +65,8 @@ export default function UserManagement() {
       setIsUpdateModalOpen(false);
       fetchUsers();
     } catch (err: any) {
-      setFormError(err.response?.data?.message || 'Update failed');
+      setFormError(err.message || 'Update failed');
+      if (err.errors) setValidationErrors(err.errors);
     } finally {
       setIsSubmitting(false);
     }
@@ -180,8 +183,9 @@ export default function UserManagement() {
               required
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${validationErrors.name ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {validationErrors.name && <p className="mt-1 text-xs text-red-600">{validationErrors.name[0]}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -190,8 +194,9 @@ export default function UserManagement() {
               required
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${validationErrors.email ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {validationErrors.email && <p className="mt-1 text-xs text-red-600">{validationErrors.email[0]}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password (Opsional)</label>
@@ -200,8 +205,9 @@ export default function UserManagement() {
               placeholder="Kosongkan jika tidak diubah"
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${validationErrors.password ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {validationErrors.password && <p className="mt-1 text-xs text-red-600">{validationErrors.password[0]}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <button

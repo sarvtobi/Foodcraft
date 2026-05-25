@@ -13,6 +13,7 @@ export default function AuthPage() {
   const isLogin = location.pathname === '/login';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -25,12 +26,19 @@ export default function AuthPage() {
 
   useEffect(() => {
     setError('');
+    setValidationErrors({});
     setSuccess('');
     setShowPassword(false);
   }, [location.pathname]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
+    // Clear validation error when user types
+    if (validationErrors[e.target.id]) {
+      const newErrors = { ...validationErrors };
+      delete newErrors[e.target.id];
+      setValidationErrors(newErrors);
+    }
   };
 
   const toggleMode = () => {
@@ -40,6 +48,7 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
     setIsLoading(true);
     try {
       const response = await api.post('/api/login', {
@@ -52,7 +61,8 @@ export default function AuthPage() {
       else if (user.role === 'owner') navigate('/owner/dashboard');
       else if (user.role === 'staff') navigate('/staff/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal login. Silahkan periksa kembali kredensial Anda.');
+      setError(err.message || 'Gagal login. Silahkan periksa kembali kredensial Anda.');
+      if (err.errors) setValidationErrors(err.errors);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +71,7 @@ export default function AuthPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
     if (formData.password !== formData.confirmPassword) {
       setError('Kata sandi tidak cocok');
       return;
@@ -76,7 +87,8 @@ export default function AuthPage() {
       setSuccess('Registrasi berhasil! Mengarahkan ke login...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal register. Silahkan coba lagi.');
+      setError(err.message || 'Gagal register. Silahkan coba lagi.');
+      if (err.errors) setValidationErrors(err.errors);
     } finally {
       setIsLoading(false);
     }

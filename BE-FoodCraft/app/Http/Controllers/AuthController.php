@@ -30,6 +30,13 @@ class AuthController extends Controller
             'role'     => User::ROLE_OWNER,
         ]);
 
+        activity('auth')
+            ->performedOn($user)
+            ->causedBy($user)
+            ->withProperties(['ip' => $request->ip()])
+            ->event('registered')
+            ->log("Owner baru {$user->name} telah mendaftar");
+
         return response()->json([
             'message' => 'Owner registered successfully',
             'user'    => $user,
@@ -57,6 +64,13 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        activity('auth')
+            ->performedOn($user)
+            ->causedBy($user)
+            ->withProperties(['ip' => $request->ip(), 'user_agent' => $request->userAgent()])
+            ->event('login')
+            ->log("{$user->name} ({$user->role}) berhasil login");
+
         return response()->json([
             'message' => 'Login successful',
             'token'   => $token,
@@ -71,6 +85,15 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = $request->user();
+
+        activity('auth')
+            ->performedOn($user)
+            ->causedBy($user)
+            ->withProperties(['ip' => $request->ip()])
+            ->event('logout')
+            ->log("{$user->name} telah logout");
+
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([

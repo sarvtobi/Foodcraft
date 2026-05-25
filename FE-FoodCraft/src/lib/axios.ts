@@ -19,10 +19,25 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    // Standardize error object based on Modul 6
+    if (error.response) {
+      const { status, data } = error.response;
+      
+      // Auto-logout on 401
+      if (status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Optional: Redirect to login if not already there
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
+      }
+
+      // Append standard fields to the error object for easy access in catch blocks
+      error.message = data.message || error.message;
+      error.errors = data.errors || null;
     }
+    
     return Promise.reject(error);
   }
 );
