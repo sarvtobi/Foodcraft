@@ -22,6 +22,7 @@ class Umkm extends Model
         'address',
         'phone',
         'owner_id',
+        'profile',
     ];
 
     public function getActivitylogOptions(): LogOptions

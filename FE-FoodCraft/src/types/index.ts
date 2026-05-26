@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   role: 'super_admin' | 'owner' | 'staff';
+  avatar?: string;
   created_at?: string;
   updated_at?: string;
 }

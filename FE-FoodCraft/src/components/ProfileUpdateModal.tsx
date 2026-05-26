@@ -1,7 +1,7 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../lib/axios';
-import { X } from 'lucide-react';
+import { X, Camera, Upload } from 'lucide-react';
 import type { User } from '../types';
 
 interface ProfileUpdateModalProps {
@@ -15,8 +15,27 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [password, setPassword] = useState('');
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setError('Ukuran file maksimal 2MB');
+        return;
+      }
+      setAvatar(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -24,12 +43,16 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
     setSubmitting(true);
 
     try {
-      const payload: any = { name, email };
-      if (password) {
-        payload.password = password;
-      }
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      formData.append('name', name);
+      formData.append('email', email);
+      if (password) formData.append('password', password);
+      if (avatar) formData.append('avatar', avatar);
 
-      const res = await api.put('/api/profile', payload);
+      const res = await api.post('/api/profile', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       
       const updatedUser: User = res.data.user || res.data.data;
       if (token && updatedUser) {
@@ -39,17 +62,19 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        'Gagal memperbarui profil. Silakan coba lagi.'
-      );
+      setError(err.message || 'Gagal memperbarui profil.');
     } finally {
       setSubmitting(false);
     }
   }
 
   if (!isOpen) return null;
+
+  const getAvatarUrl = () => {
+    if (avatarPreview) return avatarPreview;
+    if (user?.avatar) return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${user.avatar}`;
+    return null;
+  };
 
   return (
     <div className="modal-overlay">
@@ -64,6 +89,52 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
         {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
+          {/* Avatar Upload */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+            <div 
+              style={{ 
+                width: '100px', 
+                height: '100px', 
+                borderRadius: '50%', 
+                backgroundColor: 'var(--nav-active)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                overflow: 'hidden',
+                position: 'relative',
+                border: '2px solid var(--border)',
+                cursor: 'pointer'
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {getAvatarUrl() ? (
+                <img src={getAvatarUrl()!} alt="Avatar" style={{ width: '100%', height: '100%', objectCover: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  {name.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = '1'} onMouseLeave={e => e.currentTarget.style.opacity = '0'}>
+                <Camera color="white" size={24} />
+              </div>
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+            />
+            <button 
+              type="button" 
+              className="link" 
+              style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Ganti Foto Profil
+            </button>
+          </div>
+
           <div className="form-group">
             <label htmlFor="pname">Nama Lengkap</label>
             <input

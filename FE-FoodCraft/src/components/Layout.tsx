@@ -92,7 +92,17 @@ export const Layout = () => {
           </div>
           <div className="topbar-right">
             <div className="user-profile">
-              <div className="avatar">{user?.name?.charAt(0).toUpperCase() || 'U'}</div>
+              <div className="avatar">
+                {user?.avatar ? (
+                  <img 
+                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${user.avatar}`} 
+                    alt="Avatar" 
+                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+                  />
+                ) : (
+                  user?.name?.charAt(0).toUpperCase() || 'U'
+                )}
+              </div>
               <div className="user-info">
                 <span className="user-name">{user?.name || 'User'}</span>
                 <span className="user-role">{(user?.role || 'Guest').replace('_', ' ')}</span>

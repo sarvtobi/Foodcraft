@@ -133,8 +133,16 @@ export default function UserManagement() {
                     <td>#{u.id}</td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)' }}>
-                          {u.name?.charAt(0).toUpperCase() || 'U'}
+                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden' }}>
+                          {u.avatar ? (
+                            <img 
+                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${u.avatar}`} 
+                              alt={u.name} 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                          ) : (
+                            u.name?.charAt(0).toUpperCase() || 'U'
+                          )}
                         </div>
                         <div>
                           <p style={{ fontWeight: 600, color: 'var(--text-main)' }}>{u.name}</p>

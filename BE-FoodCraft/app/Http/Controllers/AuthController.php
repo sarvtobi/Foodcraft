@@ -127,10 +127,19 @@ class AuthController extends Controller
             'name'     => 'sometimes|string|max:255',
             'email'    => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:6',
+            'avatar'   => 'sometimes|image|mimes:jpeg,jpg,png|max:2048',
         ]);
 
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = $path;
         }
 
         $user->update($validated);
