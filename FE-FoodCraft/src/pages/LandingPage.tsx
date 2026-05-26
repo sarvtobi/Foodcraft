@@ -80,12 +80,12 @@ export default function LandingPage() {
         <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-          <ScrollReveal delay={0.1}>
+          {/* <ScrollReveal delay={0.1}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm text-sm font-medium text-slate-300 mb-8">
               <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
               Platform #1 untuk UMKM Makanan
             </div>
-          </ScrollReveal>
+          </ScrollReveal> */}
 
           <ScrollReveal delay={0.2}>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
@@ -118,9 +118,9 @@ export default function LandingPage() {
               titleComponent={
                 <>
                   <h1 className="text-4xl font-semibold text-black dark:text-white">
-                    Unleash the power of <br />
+                    Dashboard <br />
                     <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
-                      Scroll Animations
+                      FoodCraft
                     </span>
                   </h1>
                 </>

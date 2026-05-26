@@ -483,7 +483,19 @@ test('owner cannot access admin dashboard', function () {
 });
 
 test('staff can access staff dashboard', function () {
-    $user = User::factory()->create(['role' => 'staff']);
+    $umkm = Umkm::create([
+        'name'        => 'Staff UMKM Test',
+        'description' => 'Test Desc',
+        'address'     => 'Test Address',
+        'phone'       => '08123456789',
+        'owner_id'    => User::factory()->create(['role' => 'owner'])->id,
+        'profile'     => 'umkm_profiles/test.jpg',
+    ]);
+
+    $user = User::factory()->create([
+        'role'    => 'staff',
+        'umkm_id' => $umkm->id,
+    ]);
     $token = $user->createToken('test_token')->plainTextToken;
 
     $response = $this->withHeaders([
@@ -491,7 +503,12 @@ test('staff can access staff dashboard', function () {
     ])->getJson('/api/staff/dashboard');
 
     $response->assertStatus(200)
-        ->assertJson(['message' => 'Welcome Staff Dashboard']);
+        ->assertJson([
+            'message'      => 'Welcome Staff Dashboard',
+            'umkm_name'    => 'Staff UMKM Test',
+            'umkm_avatar'  => 'umkm_profiles/test.jpg',
+            'umkm_profile' => 'umkm_profiles/test.jpg',
+        ]);
 });
 
 test('staff cannot access owner dashboard', function () {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import { 
-  Users, Store, Activity, ShieldCheck, TrendingUp, TrendingDown,
-  ArrowUpRight, Bug, Zap, Globe, Clock, Server
+  Users, Store, Activity, ShieldCheck, TrendingUp, 
+  ArrowUpRight, Zap, Server
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="card" style={{ padding: '1.25rem' }}>
+          {/* <div className="card" style={{ padding: '1.25rem' }}>
             <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Globe size={16} /> Lokasi Node API
             </h4>
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
                 <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-main)' }}>Singapore, SG</span>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

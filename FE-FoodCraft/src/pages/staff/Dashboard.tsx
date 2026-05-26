@@ -4,13 +4,15 @@ import api from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   Package, ShoppingBag, 
-  Clock, CheckCircle2, 
+  CheckCircle2, 
   Building2, ArrowRight, ChefHat, AlertTriangle, ChevronRight
 } from 'lucide-react';
 import type { JadwalProduksi } from '../../types';
 
 interface StaffDashboardData {
   umkm_name?: string;
+  umkm_avatar?: string;
+  umkm_profile?: string;
   status?: string;
 }
 
@@ -69,9 +71,9 @@ export default function StaffDashboard() {
       {/* ── HERO SECTION ── */}
       <div style={{ marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: '3rem', height: '3rem', borderRadius: '12px', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.25rem' }}>
+          {/* <div style={{ width: '3rem', height: '3rem', borderRadius: '12px', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.25rem' }}>
             {user?.name?.charAt(0).toUpperCase() || 'S'}
-          </div>
+          </div> */}
           <div>
             <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)' }}>Halo, {user?.name}!</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Siap untuk memulai operasional produksi hari ini?</p>
@@ -98,7 +100,7 @@ export default function StaffDashboard() {
               </div>
             </div>
 
-            <div className="card" style={{ marginBottom: 0, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {/* <div className="card" style={{ marginBottom: 0, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A' }}>
                 <Clock size={24} />
               </div>
@@ -106,7 +108,7 @@ export default function StaffDashboard() {
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Status Kerja</p>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>{data?.status || 'Aktif'}</h3>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Actions Grid */}
@@ -152,10 +154,9 @@ export default function StaffDashboard() {
                           <div style={{ minWidth: 0 }}>
                             <h4 style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{products}</h4>
                             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Porsi: <strong>{totalQty} unit</strong> · {item.pesanan?.pelanggan || 'Pelanggan'}</p>
-                            </div>
-                            </div>
-                            </div>
-
+                          </div>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
@@ -175,8 +176,16 @@ export default function StaffDashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="card" style={{ padding: 0, overflow: 'hidden', border: 'none', background: 'linear-gradient(to bottom, var(--primary) 60px, var(--surface) 60px)', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ padding: '2rem 1.5rem 1.5rem' }}>
-              <div style={{ width: '4rem', height: '4rem', borderRadius: '16px', background: 'var(--surface)', boxShadow: 'var(--shadow-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', marginBottom: '1rem', border: '1px solid var(--border)' }}>
-                <Building2 size={32} />
+              <div style={{ width: '4.5rem', height: '4.5rem', borderRadius: '16px', background: 'var(--surface)', boxShadow: 'var(--shadow-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', marginBottom: '1rem', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                {data?.umkm_avatar || data?.umkm_profile ? (
+                  <img 
+                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${data.umkm_avatar || data.umkm_profile}`} 
+                    alt="UMKM" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                ) : (
+                  <Building2 size={32} />
+                )}
               </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Unit Bisnis</p>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem' }}>{data?.umkm_name || 'FoodCraft Unit'}</h2>
@@ -194,28 +203,9 @@ export default function StaffDashboard() {
               </Link>
             </div>
           </div>
-
-          {/* <div className="card" style={{ padding: '1.25rem' }}>
-            <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <InfoIcon size={16} /> Bantuan & Panduan
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <li style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '0.5rem' }}>
-                <span style={{ color: 'var(--primary)' }}>•</span> Cara input bahan baku
-              </li>
-              <li style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '0.5rem' }}>
-                <span style={{ color: 'var(--primary)' }}>•</span> Melaporkan barang rusak
-              </li>
-              <li style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '0.5rem' }}>
-                <span style={{ color: 'var(--primary)' }}>•</span> Menghubungi Owner
-              </li>
-            </ul>
-          </div> */}
         </div>
 
       </div>
     </div>
   );
 }
-
-

@@ -461,7 +461,7 @@ export default function ProdukManagement() {
                       className="form-control"
                       style={{ padding: '0.5rem', fontSize: '0.875rem' }}
                     >
-                      <option value="" disabled>-- Pilih --</option>
+                      <option value="" disabled> Pilih </option>
                       {bahanBakuList.map((b) => (
                         <option key={b.id} value={b.id}>{b.nama} ({b.satuan})</option>
                       ))}

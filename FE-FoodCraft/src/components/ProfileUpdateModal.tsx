@@ -1,7 +1,7 @@
 import { useState, type FormEvent, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../lib/axios';
-import { X, Camera, Upload } from 'lucide-react';
+import { X, Camera, Upload, Eye, EyeOff } from 'lucide-react';
 import type { User } from '../types';
 
 interface ProfileUpdateModalProps {
@@ -15,6 +15,7 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -161,13 +162,35 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
 
           <div className="form-group">
             <label htmlFor="ppassword">Password <span style={{ fontSize: '0.75rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>(Opsional - Kosongkan jika tidak ingin diubah)</span></label>
-            <input
-              id="ppassword"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-control"
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                id="ppassword"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                style={{ paddingRight: '2.5rem' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="modal-footer">

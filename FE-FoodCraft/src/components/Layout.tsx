@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3, ShieldCheck, History, Activity, Bug } from 'lucide-react';
+import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Timer, ClipboardList, ChefHat, BarChart3, ShieldCheck, History, Activity, Bug, AlertTriangle } from 'lucide-react';
 import ProfileUpdateModal from './ProfileUpdateModal';
+import Modal from './Modal';
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler';
+import AnimatedLogo from './AnimatedLogo';
 
 export const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -59,14 +62,14 @@ export const Layout = () => {
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="brand-logo">
-             <div className="logo-icon">FC</div>
-             <h2>FoodCraft</h2>
+            <AnimatedLogo />
+            <h2>FoodCraft</h2>
           </div>
           <button className="close-btn md-hidden" onClick={() => setIsSidebarOpen(false)}>
             <X size={24} />
           </button>
         </div>
-        
+
         <nav className="sidebar-nav">
           {getNavLinks().map((link) => (
             <NavLink
@@ -112,7 +115,7 @@ export const Layout = () => {
             <button onClick={() => setIsProfileModalOpen(true)} className="logout-btn" style={{ marginRight: '8px' }} title="Update Profile">
               <Settings size={18} />
             </button>
-            <button onClick={handleLogout} className="logout-btn" title="Logout">
+            <button onClick={() => setIsLogoutModalOpen(true)} className="logout-btn" title="Logout">
               <LogOut size={18} />
               <span className="hide-mobile">Logout</span>
             </button>
@@ -135,6 +138,51 @@ export const Layout = () => {
           // Additional success logic if needed (e.g., show toast)
         }}
       />
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        title="Konfirmasi Logout"
+      >
+        <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+          <div style={{ 
+            width: '64px', 
+            height: '64px', 
+            borderRadius: '50%', 
+            backgroundColor: 'oklch(0.704 0.191 22.216 / 10%)', 
+            color: '#DC2626', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            margin: '0 auto 1.5rem' 
+          }}>
+            <AlertTriangle size={32} />
+          </div>
+          <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+            Yakin ingin keluar?
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.5 }}>
+            Anda akan keluar dari sesi saat ini dan perlu login kembali untuk mengakses data.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              className="btn btn-outline" 
+              style={{ width: '120px', padding: '0.75rem' }}
+              onClick={() => setIsLogoutModalOpen(false)}
+            >
+              Batal
+            </button>
+            <button 
+              className="btn btn-danger" 
+              style={{ width: '120px', padding: '0.75rem', border: 'none' }}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
