@@ -206,7 +206,7 @@ class JadwalProduksiController extends Controller
                 if ($selisihHari == 0) $selisihHari = 1;
 
                 \App\Models\RiwayatKeterlambatan::create([
-                    // 'umkm_id' => $umkm->id,
+                    'umkm_id' => $jadwal->umkm_id,
                     'pesanan_id' => $jadwal->pesanan->id,
                     'tenggat_waktu' => $jadwal->pesanan->tenggat_waktu,
                     'diselesaikan_pada' => $waktuSelesai,

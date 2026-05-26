@@ -71,7 +71,7 @@ test('owner can create pesanan and auto calculate subtotal and priority', functi
 
     $response->assertStatus(201)
         ->assertJsonPath('pesanan.pelanggan', 'Budi')
-        ->assertJsonPath('pesanan.total_harga', 60000) // 30k * 2
+        ->assertJsonPath('pesanan.total_harga', '60000.00') // 30k * 2
         ->assertJsonPath('pesanan.prioritas', 'sedang');
 
     $this->assertDatabaseHas('pesanans', [

@@ -106,7 +106,7 @@ export default function JadwalProduksiPage() {
       {successMsg && (
         <div
           className="alert"
-          style={{ backgroundColor: '#F0FDF4', color: '#166534', borderColor: '#BBF7D0' }}
+          style={{ backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', borderColor: 'oklch(0.92 0.15 150 / 20%)' }}
         >
           {successMsg}
         </div>
@@ -155,21 +155,21 @@ export default function JadwalProduksiPage() {
             {
               label: 'Antrian Aktif',
               val: aktif.length,
-              bg: '#EEF2FF',
+              bg: 'var(--nav-active)',
               color: 'var(--primary)',
               icon: <Clock size={18} />,
             },
             {
               label: 'Selesai Hari ini',
               val: selesai.length,
-              bg: '#F0FDF4',
+              bg: 'oklch(0.92 0.15 150 / 10%)',
               color: '#16A34A',
               icon: <CheckCircle2 size={18} />,
             },
             {
               label: 'Terlambat / Kritis',
               val: jadwalList.filter((j) => j.terlambat).length,
-              bg: '#FEF2F2',
+              bg: 'oklch(0.704 0.191 22.216 / 10%)',
               color: '#DC2626',
               icon: <AlertTriangle size={18} />,
             },
@@ -213,7 +213,7 @@ export default function JadwalProduksiPage() {
           {aktif.length > 0 && (
             <span
               className="badge"
-              style={{ backgroundColor: '#EEF2FF', color: 'var(--primary)', border: '1px solid #C7D2FE', marginLeft: 'auto' }}
+              style={{ backgroundColor: 'var(--nav-active)', color: 'var(--primary)', border: '1px solid var(--border)', marginLeft: 'auto' }}
             >
               {aktif.length} item
             </span>
@@ -266,7 +266,7 @@ export default function JadwalProduksiPage() {
             Sudah Selesai Dimasak
             <span
               className="badge"
-              style={{ backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #BBF7D0', marginLeft: 'auto' }}
+              style={{ backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', border: '1px solid oklch(0.92 0.15 150 / 20%)', marginLeft: 'auto' }}
             >
               {selesai.length} item
             </span>
@@ -308,9 +308,9 @@ function JadwalCard({ jadwal, done = false, isLoading = false, onSelesai }: Jadw
     <div
       style={{
         padding: '0.875rem 1.125rem',
-        border: `1px solid ${done ? '#BBF7D0' : isTerlambat ? '#FECACA' : 'var(--border)'}`,
+        border: `1px solid ${done ? 'oklch(0.92 0.15 150 / 20%)' : isTerlambat ? 'oklch(0.704 0.191 22.216 / 20%)' : 'var(--border)'}`,
         borderRadius: '10px',
-        backgroundColor: done ? '#F0FDF4' : isTerlambat ? '#FEF2F2' : 'var(--surface)',
+        backgroundColor: done ? 'oklch(0.92 0.15 150 / 5%)' : isTerlambat ? 'oklch(0.704 0.191 22.216 / 5%)' : 'var(--surface)',
         display: 'flex',
         alignItems: 'center',
         gap: '1rem',
@@ -323,7 +323,7 @@ function JadwalCard({ jadwal, done = false, isLoading = false, onSelesai }: Jadw
           width: 40,
           height: 40,
           borderRadius: '10px',
-          backgroundColor: done ? '#DCFCE7' : isTerlambat ? '#FEE2E2' : '#EEF2FF',
+          backgroundColor: done ? 'oklch(0.92 0.15 150 / 10%)' : isTerlambat ? 'oklch(0.704 0.191 22.216 / 10%)' : 'var(--nav-active)',
           color: done ? '#16A34A' : isTerlambat ? '#DC2626' : 'var(--primary)',
           display: 'flex',
           alignItems: 'center',
@@ -343,7 +343,7 @@ function JadwalCard({ jadwal, done = false, isLoading = false, onSelesai }: Jadw
           {totalKuantitas > 0 && (
             <span
               className="badge"
-              style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0' }}
+              style={{ backgroundColor: 'var(--nav-active)', color: 'var(--text-main)', border: '1px solid var(--border)' }}
             >
               ×{totalKuantitas}
             </span>
@@ -351,7 +351,7 @@ function JadwalCard({ jadwal, done = false, isLoading = false, onSelesai }: Jadw
           {isTerlambat && !done && (
             <span
               className="badge"
-              style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
+              style={{ backgroundColor: 'oklch(0.704 0.191 22.216 / 10%)', color: '#DC2626', border: '1px solid oklch(0.704 0.191 22.216 / 20%)' }}
             >
               ⚠ Terlambat
             </span>
