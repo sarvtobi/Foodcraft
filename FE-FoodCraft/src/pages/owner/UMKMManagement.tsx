@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../lib/axios';
 import { 
   Plus, X, Building2, Edit2, MapPin, Phone, 
-  Mail, Calendar} from 'lucide-react';
+  Mail, Calendar, Camera, Info, BadgeCheck 
+} from 'lucide-react';
 
 interface Staff {
   id: number;
   name: string;
   email: string;
   role: string;
+  avatar?: string;
   created_at: string;
 }
 
@@ -18,6 +20,7 @@ interface UMKM {
   description: string;
   address: string;
   phone?: string;
+  profile?: string;
   owner_id: number;
   created_at: string;
   updated_at: string;
@@ -30,6 +33,8 @@ export default function UMKMManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -37,12 +42,13 @@ export default function UMKMManagement() {
     address: '',
     phone: ''
   });
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
 
   const fetchUMKM = async () => {
     try {
       setIsLoading(true);
       const res = await api.get('/api/owner/umkm');
-      // Payload: { message: "...", umkm: {id: 1, name: "...", staffs: [...] } }
       const data = res.data.umkm || res.data.data || res.data;
       
       if (Array.isArray(data)) {
@@ -53,7 +59,7 @@ export default function UMKMManagement() {
         setUmkm(null);
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mengambil data UMKM');
+      setError(err.message || 'Gagal mengambil data UMKM');
     } finally {
       setIsLoading(false);
     }
@@ -63,19 +69,55 @@ export default function UMKMManagement() {
     fetchUMKM();
   }, []);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file maksimal 2MB');
+        return;
+      }
+      setProfileFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
     try {
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('description', formData.description);
+      data.append('address', formData.address);
+      data.append('phone', formData.phone);
+      if (profileFile) data.append('profile', profileFile);
+
       if (modalMode === 'create') {
-        await api.post('/api/owner/umkm', formData);
+        await api.post('/api/owner/umkm', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
       } else {
-        await api.put('/api/owner/umkm', formData);
+        data.append('_method', 'PUT');
+        await api.post('/api/owner/umkm', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
       }
+      
       setIsModalOpen(false);
       setFormData({ name: '', description: '', address: '', phone: '' });
+      setProfileFile(null);
+      setProfilePreview(null);
       fetchUMKM();
     } catch (err: any) {
-      setError(err.response?.data?.message || `Gagal ${modalMode === 'create' ? 'membuat' : 'memperbarui'} UMKM`);
+      setError(err.message || `Gagal ${modalMode === 'create' ? 'membuat' : 'memperbarui'} UMKM`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -88,12 +130,15 @@ export default function UMKMManagement() {
       address: umkm.address,
       phone: umkm.phone || ''
     });
+    setProfilePreview(umkm.profile ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${umkm.profile}` : null);
     setIsModalOpen(true);
   };
 
   const openCreateModal = () => {
     setModalMode('create');
     setFormData({ name: '', description: '', address: '', phone: '' });
+    setProfileFile(null);
+    setProfilePreview(null);
     setIsModalOpen(true);
   };
 
@@ -105,6 +150,11 @@ export default function UMKMManagement() {
       </div>
     );
   }
+
+  const getProfileImg = () => {
+    if (umkm?.profile) return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${umkm.profile}`;
+    return null;
+  };
 
   return (
     <div className="fade-in" style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -142,52 +192,66 @@ export default function UMKMManagement() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
-          {/* ── HERO SECTION ── */}
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ height: '120px', background: 'linear-gradient(135deg, var(--primary) 0%, #4338CA 100%)', position: 'relative' }}>
-              <button 
+          {/* ── PROFILE HEADER ── */}
+          <div className="card" style={{ padding: '2rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              {/* Avatar Column */}
+              <div 
+                style={{ width: '150px', height: '150px', borderRadius: '24px', backgroundColor: 'var(--nav-active)', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
                 onClick={openEditModal}
-                style={{ position: 'absolute', right: '1.5rem', bottom: '-1.5rem', width: '3rem', height: '3rem', borderRadius: '50%', backgroundColor: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--primary)', boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s' }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                title="Edit Profil"
               >
-                <Edit2 size={20} />
-              </button>
-            </div>
-            
-            <div style={{ padding: '2rem', paddingTop: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>{umkm.name}</h2>
-                {/* <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, border: '1px solid oklch(0.92 0.15 150 / 20%)' }}>
-                  <BadgeCheck size={14} /> Terverifikasi
-                </span> */}
+                {getProfileImg() ? (
+                  <img src={getProfileImg()!} alt="UMKM Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                    <Building2 size={64} />
+                  </div>
+                )}
+                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = '1'} onMouseLeave={e => e.currentTarget.style.opacity = '0'}>
+                  <Camera color="white" size={24} />
+                </div>
               </div>
-              
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '800px' }}>
-                {umkm.description || 'Belum ada deskripsi bisnis.'}
-              </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '2.5rem', padding: '1.5rem', backgroundColor: 'var(--nav-active)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ color: 'var(--primary)', flexShrink: 0 }}><MapPin size={24} /></div>
+              {/* Info Column */}
+              <div style={{ flex: 1, minWidth: '300px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                   <div>
-                    <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Lokasi Operasional</h4>
-                    <p style={{ color: 'var(--text-main)', marginTop: '0.25rem', fontWeight: 500 }}>{umkm.address}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                      <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>{umkm.name}</h2>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', backgroundColor: 'oklch(0.92 0.15 150 / 10%)', color: '#16A34A', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, border: '1px solid oklch(0.92 0.15 150 / 20%)' }}>
+                        <BadgeCheck size={14} /> Terverifikasi
+                      </span>
+                    </div>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: 1.6 }}>
+                      {umkm.description || 'Belum ada deskripsi bisnis.'}
+                    </p>
                   </div>
+                  <button className="btn btn-outline" onClick={openEditModal} style={{ width: 'auto', gap: '0.5rem' }}>
+                    <Edit2 size={16} /> Edit Profil
+                  </button>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ color: 'var(--primary)', flexShrink: 0 }}><Phone size={24} /></div>
-                  <div>
-                    <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kontak Bisnis</h4>
-                    <p style={{ color: 'var(--text-main)', marginTop: '0.25rem', fontWeight: 500 }}>{umkm.phone || '-'}</p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginTop: '1.5rem', padding: '1.25rem', backgroundColor: 'var(--nav-active)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ color: 'var(--primary)', flexShrink: 0 }}><MapPin size={18} /></div>
+                    <div>
+                      <h4 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Lokasi</h4>
+                      <p style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 500 }}>{umkm.address}</p>
+                    </div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ color: 'var(--primary)', flexShrink: 0 }}><Calendar size={24} /></div>
-                  <div>
-                    <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bergabung Sejak</h4>
-                    <p style={{ color: 'var(--text-main)', marginTop: '0.25rem', fontWeight: 500 }}>{new Date(umkm.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</p>
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ color: 'var(--primary)', flexShrink: 0 }}><Phone size={18} /></div>
+                    <div>
+                      <h4 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kontak</h4>
+                      <p style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 500 }}>{umkm.phone || '-'}</p>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ color: 'var(--primary)', flexShrink: 0 }}><Calendar size={18} /></div>
+                    <div>
+                      <h4 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sejak</h4>
+                      <p style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 500 }}>{new Date(umkm.created_at).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -211,8 +275,16 @@ export default function UMKMManagement() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
                 {umkm.staffs.map(staff => (
                   <div key={staff.id} className="card" style={{ marginBottom: 0, padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '12px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 700, border: '1px solid var(--border)' }}>
-                      {staff.name.charAt(0).toUpperCase()}
+                    <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '12px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden', flexShrink: 0 }}>
+                      {staff.avatar ? (
+                        <img 
+                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${staff.avatar}`} 
+                          alt={staff.name} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        staff.name.charAt(0).toUpperCase()
+                      )}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h4 style={{ fontWeight: 700, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{staff.name}</h4>
@@ -237,7 +309,7 @@ export default function UMKMManagement() {
       {/* Modal CRUD UMKM */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h2>{modalMode === 'create' ? 'Daftarkan UMKM Baru' : 'Edit Profil Bisnis'}</h2>
               <button className="modal-close" onClick={() => setIsModalOpen(false)}>
@@ -246,34 +318,81 @@ export default function UMKMManagement() {
             </div>
             
             <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Nama Bisnis / UMKM</label>
-                <div style={{ position: 'relative' }}>
-                  <Building2 size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input
-                    type="text"
-                    className="form-control"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    style={{ paddingLeft: '3rem' }}
-                    placeholder="Contoh: Bakso Pak Joko"
-                  />
+              {/* Profile Image Upload */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+                <div 
+                  style={{ 
+                    width: '120px', 
+                    height: '120px', 
+                    borderRadius: '50%', 
+                    backgroundColor: 'var(--nav-active)', 
+                    border: '2px dashed var(--border)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {profilePreview ? (
+                    <img src={profilePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <>
+                      <Camera size={32} style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }} />
+                      <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'center', padding: '0 0.5rem' }}>Pilih Logo</p>
+                    </>
+                  )}
+                  {profilePreview && (
+                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = '1'} onMouseLeave={e => e.currentTarget.style.opacity = '0'}>
+                      <Camera color="white" size={24} />
+                    </div>
+                  )}
                 </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  accept="image/*" 
+                  style={{ display: 'none' }} 
+                />
+                <button type="button" className="link" onClick={() => fileInputRef.current?.click()} style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}>
+                  {profilePreview ? 'Ganti Logo Bisnis' : 'Unggah Logo Bisnis'}
+                </button>
               </div>
 
-              <div className="form-group">
-                <label>Nomor Telepon Bisnis</label>
-                <div style={{ position: 'relative' }}>
-                  <Phone size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input
-                    type="tel"
-                    className="form-control"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    style={{ paddingLeft: '3rem' }}
-                    placeholder="Contoh: 081234567890"
-                  />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-group">
+                  <label>Nama Bisnis</label>
+                  <div style={{ position: 'relative' }}>
+                    <Building2 size={18} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    <input
+                      type="text"
+                      className="form-control"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      style={{ paddingLeft: '2.75rem' }}
+                      placeholder="Nama UMKM Anda"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Nomor Telepon</label>
+                  <div style={{ position: 'relative' }}>
+                    <Phone size={18} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    <input
+                      type="tel"
+                      className="form-control"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      style={{ paddingLeft: '2.75rem' }}
+                      placeholder="0812..."
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -285,6 +404,7 @@ export default function UMKMManagement() {
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   placeholder="Ceritakan sedikit tentang produk atau keunggulan bisnis Anda..."
+                  style={{ resize: 'none' }}
                 ></textarea>
               </div>
 
@@ -297,13 +417,14 @@ export default function UMKMManagement() {
                   value={formData.address}
                   onChange={(e) => setFormData({...formData, address: e.target.value})}
                   placeholder="Alamat lengkap lokasi produksi/toko..."
+                  style={{ resize: 'none' }}
                 ></textarea>
               </div>
               
-              <div className="modal-footer">
+              <div className="modal-footer" style={{ marginTop: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>Batal</button>
-                <button type="submit" className="btn btn-primary" style={{ width: 'auto' }}>
-                  {modalMode === 'create' ? 'Simpan & Daftarkan' : 'Perbarui Profil'}
+                <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ width: 'auto' }}>
+                  {isSubmitting ? 'Memproses...' : (modalMode === 'create' ? 'Simpan & Daftarkan' : 'Perbarui Profil')}
                 </button>
               </div>
             </form>

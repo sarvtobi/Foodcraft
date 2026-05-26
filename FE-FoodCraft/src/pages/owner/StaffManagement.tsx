@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
-import { Plus, X, Edit, Trash2, Users, Eye, EyeOff } from 'lucide-react';
+import { Plus, X, Edit, Trash2, Users, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import Modal from '../../components/Modal';
 
 interface Staff {
   id: number;
@@ -24,6 +25,8 @@ export default function StaffManagement() {
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [staffToDelete, setStaffToDelete] = useState<Staff | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [currentStaffId, setCurrentStaffId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -89,14 +92,24 @@ export default function StaffManagement() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this staff member?')) return;
+  const handleDeleteClick = (staff: Staff) => {
+    setStaffToDelete(staff);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!staffToDelete) return;
     
     try {
-      await api.delete(`/api/owner/staff/${id}`);
+      setIsLoading(true);
+      await api.delete(`/api/owner/staff/${staffToDelete.id}`);
+      setIsDeleteModalOpen(false);
+      setStaffToDelete(null);
       fetchData(); // Refresh list
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete staff');
+      setError(err.response?.data?.message || 'Gagal menghapus staff');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -173,7 +186,7 @@ export default function StaffManagement() {
                       <button className="btn btn-outline" style={{ padding: '0.4rem', border: 'none', color: 'var(--text-main)', marginRight: '0.5rem' }} onClick={() => openEditModal(staff)}>
                         <Edit size={16} />
                       </button>
-                      <button className="btn btn-danger" style={{ padding: '0.4rem', border: 'none' }} onClick={() => handleDelete(staff.id)}>
+                      <button className="btn btn-danger" style={{ padding: '0.4rem', border: 'none' }} onClick={() => handleDeleteClick(staff)}>
                         <Trash2 size={16} />
                       </button>
                     </td>
@@ -277,6 +290,52 @@ export default function StaffManagement() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Hapus Staff"
+      >
+        <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+          <div style={{ 
+            width: '64px', 
+            height: '64px', 
+            borderRadius: '50%', 
+            backgroundColor: 'oklch(0.704 0.191 22.216 / 10%)', 
+            color: '#DC2626', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            margin: '0 auto 1.5rem' 
+          }}>
+            <AlertTriangle size={32} />
+          </div>
+          <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+            Konfirmasi Penghapusan
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.5 }}>
+            Apakah Anda yakin ingin menghapus <strong>{staffToDelete?.name}</strong>? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              className="btn btn-outline" 
+              style={{ width: '120px', padding: '0.75rem' }}
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              Batal
+            </button>
+            <button 
+              className="btn btn-danger" 
+              style={{ width: '120px', padding: '0.75rem', border: 'none' }}
+              onClick={confirmDelete}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Menghapus...' : 'Ya, Hapus'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

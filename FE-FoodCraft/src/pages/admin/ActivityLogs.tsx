@@ -20,6 +20,7 @@ interface ActivityLog {
     name: string;
     email: string;
     role: string;
+    avatar?: string;
   } | null;
 }
 
@@ -121,8 +122,16 @@ export default function ActivityLogs() {
                   <tr key={log.id}>
                     <td style={{ minWidth: '220px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)' }}>
-                          {log.causer?.name?.charAt(0).toUpperCase() || '?'}
+                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden' }}>
+                          {log.causer?.avatar ? (
+                            <img 
+                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${log.causer.avatar}`} 
+                              alt={log.causer.name} 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                          ) : (
+                            log.causer?.name?.charAt(0).toUpperCase() || '?'
+                          )}
                         </div>
                         <div style={{ minWidth: 0 }}>
                           <p style={{ fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

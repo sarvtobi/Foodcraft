@@ -17,6 +17,7 @@ interface ActivityLog {
     old?: Record<string, any>;
   };
   causer: {
+    avatar: any;
     id: number;
     name: string;
     role: string;
@@ -183,8 +184,16 @@ export default function ActivityLogsPage({ apiPath, title, subtitle }: ActivityL
                   <tr key={log.id}>
                     <td style={{ verticalAlign: 'top', width: '200px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '2.25rem', height: '2.25rem', borderRadius: '10px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', flexShrink: 0 }}>
-                          {log.causer?.name?.charAt(0).toUpperCase() || '?'}
+                        <div style={{ width: '2.25rem', height: '2.25rem', borderRadius: '10px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', flexShrink: 0, overflow: 'hidden' }}>
+                          {log.causer?.avatar ? (
+                            <img 
+                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${log.causer.avatar}`} 
+                              alt={log.causer.name} 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                          ) : (
+                            log.causer?.name?.charAt(0).toUpperCase() || '?'
+                          )}
                         </div>
                         <div style={{ minWidth: 0 }}>
                           <p style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

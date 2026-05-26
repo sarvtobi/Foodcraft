@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import api from '../../lib/axios';
 import {
   BarChart3, RefreshCw, ChevronLeft, ChevronRight,
@@ -51,61 +52,172 @@ function getPeriodLabel(ym: string) {
 
 // ─── Mini SVG Line Chart ──────────────────────────────────────────────────────
 function LineChart({ data, activeFilter }: { data: GrafikPoint[]; activeFilter: string }) {
-  const W = 800, H = 200, PAD = 30;
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const W = 800, H = 200, PAD_X = 40, PAD_Y = 30;
+  
   if (!data.length) return null;
 
-  const maxVal = Math.max(...data.flatMap(d => [d.efisiensi, d.kapasitas]), 1);
-  const pts = (key: 'efisiensi' | 'kapasitas') =>
-    data.map((d, i) => {
-      const x = PAD + (i / (data.length - 1)) * (W - PAD * 2);
-      const y = H - PAD - ((d[key] / maxVal) * (H - PAD * 2));
-      return `${x},${y}`;
-    }).join(' ');
+  const maxVal = Math.max(...data.flatMap(d => [d.efisiensi, d.kapasitas]), 100);
+  
+  const getX = (i: number) => PAD_X + (i / (data.length - 1)) * (W - PAD_X * 2);
+  const getY = (v: number) => H - PAD_Y - ((v / maxVal) * (H - PAD_Y * 2));
 
-  const polyPts = (key: 'efisiensi' | 'kapasitas') => {
-    const mapped = data.map((d, i) => ({
-      x: PAD + (i / (data.length - 1)) * (W - PAD * 2),
-      y: H - PAD - ((d[key] / maxVal) * (H - PAD * 2)),
-    }));
-    const close = `${mapped[mapped.length - 1].x},${H - PAD} ${mapped[0].x},${H - PAD}`;
-    return mapped.map(p => `${p.x},${p.y}`).join(' ') + ' ' + close;
-  };
+  const ptsEfisiensi = data.map((d, i) => `${getX(i)},${getY(d.efisiensi)}`).join(' ');
+  const ptsKapasitas = data.map((d, i) => `${getX(i)},${getY(d.kapasitas)}`).join(' ');
 
-  const yTicks = [0, 30, 60, 90, 120].filter(v => v <= maxVal + 10);
+  const polyEfisiensi = `${ptsEfisiensi} ${getX(data.length - 1)},${H - PAD_Y} ${getX(0)},${H - PAD_Y}`;
+
+  const yTicks = [0, 25, 50, 75, 100];
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 200, overflow: 'visible' }}>
-      {yTicks.map(v => {
-        const y = H - PAD - ((v / maxVal) * (H - PAD * 2));
-        return (
-          <g key={v}>
-            <line x1={PAD} x2={W - PAD} y1={y} y2={y} stroke="var(--border)" strokeWidth={1} />
-            <text x={PAD - 6} y={y + 4} textAnchor="end" fontSize={10} fill="var(--text-muted)">{v}</text>
+    <div style={{ position: 'relative' }}>
+      <svg 
+        viewBox={`0 0 ${W} ${H}`} 
+        style={{ width: '100%', height: 250, overflow: 'visible', cursor: 'crosshair' }}
+        onMouseMove={(e) => {
+          const svg = e.currentTarget;
+          const rect = svg.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * W;
+          const relativeX = (x - PAD_X) / (W - PAD_X * 2);
+          const index = Math.round(relativeX * (data.length - 1));
+          if (index >= 0 && index < data.length) setHoveredIndex(index);
+        }}
+        onMouseLeave={() => setHoveredIndex(null)}
+      >
+        <defs>
+          <linearGradient id="efGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0EA5E9" stopOpacity={0.4} />
+            <stop offset="100%" stopColor="#0EA5E9" stopOpacity={0} />
+          </linearGradient>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0EA5E9" floodOpacity="0.3" />
+          </filter>
+        </defs>
+
+        {/* Grid Lines */}
+        {yTicks.map(v => {
+          const y = getY(v);
+          return (
+            <g key={v}>
+              <line x1={PAD_X} x2={W - PAD_X} y1={y} y2={y} stroke="var(--border)" strokeWidth={1} strokeDasharray="4,4" opacity={0.5} />
+              <text x={PAD_X - 10} y={y + 4} textAnchor="end" fontSize={10} fill="var(--text-muted)" fontWeight={500}>{v}%</text>
+            </g>
+          );
+        })}
+
+        {/* X-Axis Labels */}
+        {data.map((d, i) => (
+          <text key={d.bulan} x={getX(i)} y={H - 5} textAnchor="middle" fontSize={10} fill="var(--text-muted)" fontWeight={600}>{d.bulan}</text>
+        ))}
+
+        {/* Capacity Line (Dashed) */}
+        {(activeFilter === 'semua' || activeFilter === 'kapasitas') && (
+          <motion.polyline
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            points={ptsKapasitas}
+            fill="none"
+            stroke="var(--text-muted)"
+            strokeWidth={2}
+            strokeDasharray="6,4"
+            strokeLinejoin="round"
+            opacity={0.4}
+          />
+        )}
+
+        {/* Efficiency Area & Line */}
+        {(activeFilter === 'semua' || activeFilter === 'efisiensi') && (
+          <>
+            <motion.polygon
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              points={polyEfisiensi}
+              fill="url(#efGrad)"
+            />
+            <motion.polyline
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              points={ptsEfisiensi}
+              fill="none"
+              stroke="#0EA5E9"
+              strokeWidth={3}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              filter="url(#shadow)"
+            />
+          </>
+        )}
+
+        {/* Hover Guide & Tooltip Trigger Areas */}
+        {hoveredIndex !== null && (
+          <g>
+            <line 
+              x1={getX(hoveredIndex)} x2={getX(hoveredIndex)} 
+              y1={PAD_Y} y2={H - PAD_Y} 
+              stroke="var(--primary)" strokeWidth={1} strokeDasharray="2,2" 
+            />
+            {(activeFilter === 'semua' || activeFilter === 'efisiensi') && (
+              <circle 
+                cx={getX(hoveredIndex)} cy={getY(data[hoveredIndex].efisiensi)} 
+                r={5} fill="#0EA5E9" stroke="#fff" strokeWidth={2} 
+              />
+            )}
+            {(activeFilter === 'semua' || activeFilter === 'kapasitas') && (
+              <circle 
+                cx={getX(hoveredIndex)} cy={getY(data[hoveredIndex].kapasitas)} 
+                r={4} fill="var(--text-muted)" stroke="#fff" strokeWidth={2} 
+              />
+            )}
           </g>
-        );
-      })}
-      {data.map((d, i) => {
-        const x = PAD + (i / (data.length - 1)) * (W - PAD * 2);
-        return <text key={d.bulan} x={x} y={H - 8} textAnchor="middle" fontSize={10} fill="var(--text-muted)">{d.bulan}</text>;
-      })}
+        )}
+      </svg>
 
-      {(activeFilter === 'semua' || activeFilter === 'efisiensi') && (
-        <>
-          <polygon points={polyPts('efisiensi')} fill="url(#efGrad)" opacity={0.2} />
-          <polyline points={pts('efisiensi')} fill="none" stroke="#0EA5E9" strokeWidth={2.5} strokeLinejoin="round" />
-        </>
-      )}
-      {(activeFilter === 'semua' || activeFilter === 'kapasitas') && (
-        <polyline points={pts('kapasitas')} fill="none" stroke="#94A3B8" strokeWidth={1.5} strokeDasharray="5,4" strokeLinejoin="round" />
-      )}
-
-      <defs>
-        <linearGradient id="efGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0EA5E9" stopOpacity={0.8} />
-          <stop offset="100%" stopColor="#0EA5E9" stopOpacity={0} />
-        </linearGradient>
-      </defs>
-    </svg>
+      {/* Professional Tooltip */}
+      <AnimatePresence>
+        {hoveredIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            style={{
+              position: 'absolute',
+              left: getX(hoveredIndex),
+              top: PAD_Y,
+              transform: 'translateX(-50%)',
+              pointerEvents: 'none',
+              zIndex: 10,
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '0.75rem 1rem',
+              boxShadow: 'var(--shadow-lg)',
+              minWidth: '140px'
+            }}
+          >
+            <p style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.25rem' }}>
+              {getPeriodLabel(data[hoveredIndex].bulan)}
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0EA5E9' }} /> Efisiensi
+                </span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0EA5E9' }}>{data[hoveredIndex].efisiensi}%</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '2px', background: 'var(--text-muted)' }} /> Kapasitas
+                </span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)' }}>{data[hoveredIndex].kapasitas}%</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

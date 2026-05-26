@@ -28,7 +28,13 @@ class UmkmController extends Controller
             'description' => 'nullable|string',
             'address'     => 'nullable|string',
             'phone'       => 'nullable|string|max:20',
+            'profile'     => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
+
+        $profilePath = null;
+        if ($request->hasFile('profile')) {
+            $profilePath = $request->file('profile')->store('umkm_profiles', 'public');
+        }
 
         $umkm = Umkm::create([
             'name'        => $validated['name'],
@@ -36,6 +42,7 @@ class UmkmController extends Controller
             'address'     => $validated['address'] ?? null,
             'phone'       => $validated['phone'] ?? null,
             'owner_id'    => $user->id,
+            'profile'     => $profilePath,
         ]);
 
         return response()->json([
@@ -87,7 +94,16 @@ class UmkmController extends Controller
             'description' => 'nullable|string',
             'address'     => 'nullable|string',
             'phone'       => 'nullable|string|max:20',
+            'profile'     => 'sometimes|nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
+
+        if ($request->hasFile('profile')) {
+            if ($umkm->profile) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($umkm->profile);
+            }
+            $path = $request->file('profile')->store('umkm_profiles', 'public');
+            $validated['profile'] = $path;
+        }
 
         $umkm->update($validated);
 

@@ -95,80 +95,105 @@ export default function UserManagement() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="fade-in">
+      <div className="flex-between" style={{ marginBottom: '2rem' }}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Manajemen User</h1>
-          <p className="text-gray-600 mt-1">Kelola data owner dan staff</p>
+          <h1 className="page-header">Manajemen Pengguna</h1>
+          <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem' }}>Kelola data akses owner dan staff dalam sistem</p>
         </div>
       </div>
 
-      {error ? (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">{error}</div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50">
-            <Users size={20} className="text-gray-500" />
-            <h2 className="text-lg font-bold text-gray-800">Daftar Pengguna</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 text-gray-500 text-sm uppercase tracking-wider">
-                  <th className="p-4 border-b border-gray-100 font-medium">ID</th>
-                  <th className="p-4 border-b border-gray-100 font-medium">Nama</th>
-                  <th className="p-4 border-b border-gray-100 font-medium">Email</th>
-                  <th className="p-4 border-b border-gray-100 font-medium">Role</th>
-                  <th className="p-4 border-b border-gray-100 font-medium text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-500">Tidak ada data pengguna.</td>
-                  </tr>
-                ) : (
-                  users.map((u) => (
-                    <tr key={u.id} className="hover:bg-gray-50 text-sm text-gray-700 transition-colors">
-                      <td className="p-4">#{u.id}</td>
-                      <td className="p-4 font-medium text-gray-900">{u.name}</td>
-                      <td className="p-4 text-gray-500">{u.email}</td>
-                      <td className="p-4">
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium uppercase ${
-                          u.role === 'super_admin' ? 'bg-red-100 text-red-700' : 
-                          u.role === 'owner' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                        }`}>
-                          {u.role ? u.role.replace('_', ' ') : 'USER'}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right">
-                        {u.role !== 'super_admin' && (
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => openUpdateModal(u)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                              title="Edit"
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => openDeleteModal(u)}
-                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+      {error && <div className="alert alert-error">{error}</div>}
+
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2 bg-gray-50/30 dark:bg-gray-800/20">
+          <Users size={20} className="text-gray-500" />
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>Daftar Pengguna</h2>
         </div>
-      )}
+        <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nama & Email</th>
+                <th>Role Akses</th>
+                <th style={{ textAlign: 'right' }}>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: '3rem' }}>
+                    <p style={{ color: 'var(--text-muted)' }}>Tidak ada data pengguna.</p>
+                  </td>
+                </tr>
+              ) : (
+                users.map((u) => (
+                  <tr key={u.id}>
+                    <td>#{u.id}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden' }}>
+                          {u.avatar ? (
+                            <img 
+                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${u.avatar}`} 
+                              alt={u.name} 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                          ) : (
+                            u.name?.charAt(0).toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div>
+                          <p style={{ fontWeight: 600, color: 'var(--text-main)' }}>{u.name}</p>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{u.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span style={{ 
+                        display: 'inline-flex',
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        backgroundColor: u.role === 'super_admin' ? 'oklch(0.704 0.191 22.216 / 10%)' : u.role === 'owner' ? 'oklch(0.5 0.2 260 / 10%)' : 'oklch(0.92 0.15 150 / 10%)',
+                        color: u.role === 'super_admin' ? '#DC2626' : u.role === 'owner' ? 'var(--primary)' : '#16A34A',
+                        border: `1px solid ${u.role === 'super_admin' ? 'oklch(0.704 0.191 22.216 / 20%)' : u.role === 'owner' ? 'oklch(0.5 0.2 260 / 20%)' : 'oklch(0.92 0.15 150 / 20%)'}`
+                      }}>
+                        {u.role ? u.role.replace('_', ' ') : 'USER'}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      {u.role !== 'super_admin' && (
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => openUpdateModal(u)}
+                            className="btn btn-outline"
+                            style={{ padding: '0.4rem', border: 'none' }}
+                            title="Edit User"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => openDeleteModal(u)}
+                            className="btn btn-danger"
+                            style={{ padding: '0.4rem', border: 'none' }}
+                            title="Hapus User"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Update Modal */}
       <Modal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} title="Update User">
