@@ -1,0 +1,1 @@
+- [x] 1. Start backend server: cd BE-FoodCraft && php artisan serve --port=8000
