@@ -2,6 +2,7 @@ import { useState, type FormEvent, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../lib/axios';
 import { X, Camera, Upload, Eye, EyeOff } from 'lucide-react';
+import { getStorageUrl } from '../lib/utils';
 import type { User } from '../types';
 
 interface ProfileUpdateModalProps {
@@ -73,7 +74,7 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
 
   const getAvatarUrl = () => {
     if (avatarPreview) return avatarPreview;
-    if (user?.avatar) return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${user.avatar}`;
+    if (user?.avatar) return getStorageUrl(user.avatar);
     return null;
   };
 

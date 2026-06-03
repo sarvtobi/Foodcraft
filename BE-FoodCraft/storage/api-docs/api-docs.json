@@ -1,0 +1,2078 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "FoodCraft BE API Documentation",
+        "description": "API documentation for Sistem Manajemen Produksi UMKM Makanan (FoodCraft) - Backend Service",
+        "contact": {
+            "name": "FoodCraft Support Team",
+            "email": "support@foodcraft.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Default API Prefix Gateway"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth & Profile"
+                ],
+                "summary": "Register a new user",
+                "operationId": "8a216696de0932f86fa3c0e26af52366",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Budi Owner"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "budi@foodcraft.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "owner",
+                                        "enum": [
+                                            "owner",
+                                            "staff",
+                                            "super_admin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|aBcDeFg..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth & Profile"
+                ],
+                "summary": "User Login",
+                "operationId": "45dec7a928f3ebcfb89878667972ad19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "owner@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "2|xYzAbCd..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth & Profile"
+                ],
+                "summary": "User Logout",
+                "operationId": "352ba77c8efae998301608aef6180a16",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Auth & Profile"
+                ],
+                "summary": "Get authenticated user profile",
+                "operationId": "425a8898e3d0b39ba6ecc9280d1f6fe0",
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Auth & Profile"
+                ],
+                "summary": "Update authenticated user profile (with avatar support)",
+                "description": "To upload a file and update fields, use a multipart/form-data request with `_method` set to `PUT`.",
+                "operationId": "533e864168bf5702f108eb312b48c31e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "description": "Method spoofing to support PUT requests in file uploads",
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Budi Baru"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "newemail@foodcraft.com"
+                                    },
+                                    "avatar": {
+                                        "description": "Image file: JPG, JPEG, PNG (max 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User profile updated successfully"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/dashboard": {
+            "get": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Super Admin Dashboard SaaS Metrics",
+                "operationId": "89b63b1bec6d8506eb2299cdf2adc9a2",
+                "responses": {
+                    "200": {
+                        "description": "Dashboard statistics successfully retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome Super Admin Dashboard"
+                                        },
+                                        "metrics": {
+                                            "properties": {
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "total_users_growth": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 64.29
+                                                },
+                                                "total_umkms": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "total_umkm_trend": {
+                                                    "type": "string",
+                                                    "example": "up"
+                                                },
+                                                "active_users_24h": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "system_health": {
+                                            "properties": {
+                                                "avg_latency_ms": {
+                                                    "type": "integer",
+                                                    "example": 142
+                                                },
+                                                "success_rate_percent": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 98.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/users": {
+            "get": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "List all registered owners/users",
+                "operationId": "c8b49e7e4ee08fce2852f8fb6c5e936f",
+                "responses": {
+                    "200": {
+                        "description": "Successful users retrieval",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/users/{id}": {
+            "put": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Update owner/user account (Super Admin only)",
+                "operationId": "cb7f221d4259ce86936d600e132b38e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Owner Name Update"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "updated@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Owner updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Delete user/owner (Super Admin only)",
+                "operationId": "f3bb01254f252fe78ff6a1cebfb5dab4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Owner deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/activity-logs": {
+            "get": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Retrieve Admin Login & Activity Logs",
+                "operationId": "83f34c569c889a4e38cd131910321453",
+                "responses": {
+                    "200": {
+                        "description": "Logs list retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/api-logs": {
+            "get": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Retrieve API Request logs for tracking server load/activity",
+                "operationId": "723a260799b3d3c7e520a5b58755f87e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "method",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status_code",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logs retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/system-errors": {
+            "get": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Retrieve logged system internal errors (500)",
+                "operationId": "19ca241d215ce884c7acceff5ca020f1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "resolved",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System errors fetched successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/system-errors/{id}/resolve": {
+            "put": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Mark system error resolved",
+                "operationId": "ddd86488a228911aaeaa1c44da5e9764",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "resolved"
+                                ],
+                                "properties": {
+                                    "resolved": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Error marked as resolved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/system-errors/{id}": {
+            "delete": {
+                "tags": [
+                    "Super Admin"
+                ],
+                "summary": "Delete error log record",
+                "operationId": "527e00d23cc2fe3d6321f0c9c76e93a7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Error log deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/dashboard": {
+            "get": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Get Owner dashboard context metrics",
+                "operationId": "4f21ea64fbea15c365c0c6215cbe7fe3",
+                "responses": {
+                    "200": {
+                        "description": "Owner dashboard context statistics"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/umkm": {
+            "get": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Show UMKM profile details",
+                "operationId": "d828db72f9d396f64965cc9f97e64668",
+                "responses": {
+                    "200": {
+                        "description": "UMKM details fetched"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Initialize UMKM business details",
+                "operationId": "3e51c7e435f2dc85824d046edbd8ac8f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Bakso Super"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Industri bakso rumahan"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jl. Kamboja No. 5"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08123456789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "UMKM created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/umkm/update": {
+            "post": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Update UMKM profile (supports logo file upload)",
+                "description": "To upload a file and update fields, use a multipart/form-data request with `_method` set to `PUT` on `/api/owner/umkm`.",
+                "operationId": "7a54e827efecb0ccf3ccab4b55b5b1d5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Bakso Super Update"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Deskripsi update"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Alamat update"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "08210000000"
+                                    },
+                                    "profile": {
+                                        "description": "Logo/profile photo: JPG, JPEG, PNG (max 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "UMKM updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/staff": {
+            "get": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "List all staff members of Owner's UMKM",
+                "operationId": "151f1978851426b7133bc814af380f8a",
+                "responses": {
+                    "200": {
+                        "description": "Staff list retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Create staff employee account for UMKM",
+                "operationId": "463bc5603bb1c04dc6287c69e76c35b0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Staff Doni"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "doni@staff.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "doni123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Staff created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/staff/{id}": {
+            "put": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Update staff employee details",
+                "operationId": "2195279f89b7e1c4925baf3aa9b60a69",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Staff Name Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "doni_new@staff.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Staff updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Remove/Delete staff employee",
+                "operationId": "c89a10bd906561a782ec7f1d8ce140a4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Staff deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/activity-logs": {
+            "get": {
+                "tags": [
+                    "Owner - UMKM & Staff"
+                ],
+                "summary": "Get login logs and activity logs of the Owner's UMKM",
+                "operationId": "83968424bf9403424c836f780cb2c91e",
+                "responses": {
+                    "200": {
+                        "description": "Logs retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/bahan-baku": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "List all Bahan Baku (Raw Materials)",
+                "operationId": "1b67c2253e547c9edd128fad9153a377",
+                "responses": {
+                    "200": {
+                        "description": "Bahan Baku list fetched"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Register a new Bahan Baku",
+                "operationId": "cf1256b41a846fdc5b055d92efb5dc21",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama",
+                                    "stok_riil",
+                                    "satuan"
+                                ],
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Tepung Terigu"
+                                    },
+                                    "stok_riil": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50
+                                    },
+                                    "satuan": {
+                                        "type": "string",
+                                        "example": "kg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bahan baku created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/bahan-baku/{id}": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Get details of one Bahan Baku",
+                "operationId": "25da547b7903e580ffd7f9d29f133c68",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bahan baku detail retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Update Bahan Baku details/stok",
+                "operationId": "1d9fb406dae6b0ef85bc7a7ad8221315",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Tepung Terigu Segitiga Biru"
+                                    },
+                                    "stok_riil": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 55
+                                    },
+                                    "satuan": {
+                                        "type": "string",
+                                        "example": "kg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bahan baku updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Delete a Bahan Baku record",
+                "operationId": "819c1e056f68c22022fa6b1f2c11b535",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bahan baku deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/produk": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "List all Produk",
+                "operationId": "04f891e7ce97f2cce73e583da1309b07",
+                "responses": {
+                    "200": {
+                        "description": "Produk list retrieved"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Register a new Produk",
+                "operationId": "ffe863cc94f6bf302b89289e4e53bf2c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama",
+                                    "harga",
+                                    "durasi_menit"
+                                ],
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Bakso Sapi Isi Keju"
+                                    },
+                                    "harga": {
+                                        "type": "integer",
+                                        "example": 25000
+                                    },
+                                    "durasi_menit": {
+                                        "type": "integer",
+                                        "example": 30
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produk created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/produk/{id}": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Get details of a specific Produk including recipe ingredients",
+                "operationId": "f1f33d673c520652f64a7adc60a2600b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produk detail with recipe list"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Update Produk details",
+                "operationId": "444b8d010a663c19ccad34245da8f364",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama": {
+                                        "type": "string",
+                                        "example": "Bakso Sapi Keju Jumbo"
+                                    },
+                                    "harga": {
+                                        "type": "integer",
+                                        "example": 28000
+                                    },
+                                    "durasi_menit": {
+                                        "type": "integer",
+                                        "example": 35
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produk updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Delete a Produk record",
+                "operationId": "c0270cca222ce82e7ea3057a21d8e560",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produk deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/kapasitas": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Retrieve UMKM capacity constraint details",
+                "operationId": "8539b57e25eb5e3ee7bd6f46cd0d9677",
+                "responses": {
+                    "200": {
+                        "description": "UMKM capacity returned"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Set/Upsert UMKM daily capacity limit (in minutes)",
+                "operationId": "42276ee6248de6c1c9257b8a8244a255",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kapasitas_menit_harian"
+                                ],
+                                "properties": {
+                                    "kapasitas_menit_harian": {
+                                        "type": "integer",
+                                        "example": 480
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kapasitas updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/produk/{produk_id}/resep": {
+            "post": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Add a recipe ingredient (Bahan Baku) mapping to a Produk",
+                "operationId": "546855fd262a2028d7302c729b43609b",
+                "parameters": [
+                    {
+                        "name": "produk_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bahan_baku_id",
+                                    "jumlah_butuh"
+                                ],
+                                "properties": {
+                                    "bahan_baku_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "jumlah_butuh": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 0.25
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Recipe item added successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/resep/{id}": {
+            "put": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Update required quantity of a recipe ingredient",
+                "operationId": "7828ffe32e5863620395412df9a8b6fb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jumlah_butuh"
+                                ],
+                                "properties": {
+                                    "jumlah_butuh": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 0.35
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Recipe item updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Remove recipe ingredient from Produk",
+                "operationId": "c6697460bca75c56ae3dbe50214d7e64",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recipe item deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/dasbor-analitik": {
+            "get": {
+                "tags": [
+                    "Owner - Master Data"
+                ],
+                "summary": "Owner Business Intelligence Dashboard & Analytical Reports",
+                "operationId": "d690b82b18f06cf71f143fb9fee6d2b6",
+                "parameters": [
+                    {
+                        "name": "periode",
+                        "in": "query",
+                        "description": "Format YYYY-MM",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-05"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Report data fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "periode": {
+                                            "type": "string",
+                                            "example": "2026-05"
+                                        },
+                                        "performa_pesanan": {
+                                            "type": "object"
+                                        },
+                                        "ketepatan_waktu_persen": {
+                                            "type": "number"
+                                        },
+                                        "utilisasi_kapasitas_persen": {
+                                            "type": "number"
+                                        },
+                                        "top_produk": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/dashboard": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Staff Dashboard Welcome Screen with UMKM contexts",
+                "operationId": "32e6513c1fbea66083115769196a0fee",
+                "responses": {
+                    "200": {
+                        "description": "Welcome data retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome Staff Dashboard"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "umkm_name": {
+                                            "type": "string",
+                                            "example": "Bakso Super"
+                                        },
+                                        "umkm_avatar": {
+                                            "type": "string",
+                                            "example": "umkm_profiles/avatar.png"
+                                        },
+                                        "umkm_profile": {
+                                            "type": "string",
+                                            "example": "umkm_profiles/avatar.png"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/bahan-baku": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only list of Bahan Baku (Staff)",
+                "operationId": "c4101bca363d5482fc7f699d714bffef",
+                "responses": {
+                    "200": {
+                        "description": "Bahan Baku list"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/bahan-baku/{id}": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only details of one Bahan Baku (Staff)",
+                "operationId": "c3e0fafa1c1e91b423c36d091dd9c076",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bahan baku detail"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/produk": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only list of Products (Staff)",
+                "operationId": "4b6a68b610886447c6d8057afea04b41",
+                "responses": {
+                    "200": {
+                        "description": "Products list"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/produk/{id}": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only details of Product (Staff)",
+                "operationId": "ee377d57adfc8b20d4f0b7a14fd11091",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product detail"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/kapasitas": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only Capacity settings of the UMKM (Staff)",
+                "operationId": "79c455ee02a235ae0eda51afb2c121c0",
+                "responses": {
+                    "200": {
+                        "description": "Capacity settings"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/activity-logs": {
+            "get": {
+                "tags": [
+                    "Staff - Access"
+                ],
+                "summary": "Read-only login and activity logs of this staff member",
+                "operationId": "19aa32c24ad02c3b783612c4bfe67907",
+                "responses": {
+                    "200": {
+                        "description": "Activity logs list"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pesanan": {
+            "get": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "List all Order Queue (Auto-sorted by priority & nearest deadline)",
+                "operationId": "90e22f241af85b1dc43675dea60a6950",
+                "responses": {
+                    "200": {
+                        "description": "Order queue list"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "Input a new Order (Kasir/Staff/Owner)",
+                "operationId": "b65f907087454cc42ce772f99b0b5071",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pelanggan",
+                                    "tenggat_waktu",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "pelanggan": {
+                                        "type": "string",
+                                        "example": "Ibu Susi"
+                                    },
+                                    "tenggat_waktu": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-05"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "produk_id",
+                                                "kuantitas"
+                                            ],
+                                            "properties": {
+                                                "produk_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "kuantitas": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order registered successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pesanan/{id}": {
+            "get": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "Get details of a specific Order with ordered items",
+                "operationId": "1930603b1709ec3eed165dfc81a4cec4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order invoice and details"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pesanan/{id}/status": {
+            "put": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "Update progress status of a Pesanan",
+                "operationId": "78d65cfd4b0d48ca97a07705884adf29",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "diproses",
+                                        "enum": [
+                                            "pending",
+                                            "diproses",
+                                            "selesai",
+                                            "dibatalkan"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/owner/pesanan/{id}/jadwalkan": {
+            "post": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "Jadwalkan Order to Capacity Engine & block materials (Owner only)",
+                "operationId": "60360d1661106179d1004ebbf180437c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Production scheduled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pesanan berhasil dijadwalkan"
+                                        },
+                                        "tanggal_produksi": {
+                                            "type": "string",
+                                            "example": "2026-05-30"
+                                        },
+                                        "terlambat": {
+                                            "type": "boolean",
+                                            "example": false
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/jadwal-produksi": {
+            "get": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "List scheduled recipes to make in kitchen today",
+                "operationId": "4eb9fed1943466f29bdb08d6b96a7795",
+                "parameters": [
+                    {
+                        "name": "tanggal",
+                        "in": "query",
+                        "description": "Format YYYY-MM-DD",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-05-30"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Scheduled production list returned"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/staff/jadwal-produksi/{id}/selesai": {
+            "post": {
+                "tags": [
+                    "Pesanan & Penjadwalan"
+                ],
+                "summary": "Mark cooking schedule as finished (reduces real stock)",
+                "operationId": "58b86d38bee006ba96cc91c721ba46be",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Production completed and raw materials reduced successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Enter your Bearer Token (obtained from /login) to authorize request execution.",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth & Profile",
+            "description": "Auth & Profile"
+        },
+        {
+            "name": "Super Admin",
+            "description": "Super Admin"
+        },
+        {
+            "name": "Owner - UMKM & Staff",
+            "description": "Owner - UMKM & Staff"
+        },
+        {
+            "name": "Owner - Master Data",
+            "description": "Owner - Master Data"
+        },
+        {
+            "name": "Staff - Access",
+            "description": "Staff - Access"
+        },
+        {
+            "name": "Pesanan & Penjadwalan",
+            "description": "Pesanan & Penjadwalan"
+        }
+    ]
+}

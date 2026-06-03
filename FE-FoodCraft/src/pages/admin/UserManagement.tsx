@@ -3,6 +3,7 @@ import api from '../../lib/axios';
 import Modal from '../../components/Modal';
 import { Users, Edit2, Trash2 } from 'lucide-react';
 import type { User } from '../../types';
+import { getStorageUrl } from '../../lib/utils';
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
@@ -136,7 +137,7 @@ export default function UserManagement() {
                         <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden' }}>
                           {u.avatar ? (
                             <img 
-                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${u.avatar}`} 
+                              src={getStorageUrl(u.avatar)!} 
                               alt={u.name} 
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                             />

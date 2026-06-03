@@ -4,6 +4,7 @@ import {
   Plus, X, Building2, Edit2, MapPin, Phone, 
   Mail, Calendar, Camera, Info, BadgeCheck 
 } from 'lucide-react';
+import { getStorageUrl } from '../../lib/utils';
 
 interface Staff {
   id: number;
@@ -130,7 +131,7 @@ export default function UMKMManagement() {
       address: umkm.address,
       phone: umkm.phone || ''
     });
-    setProfilePreview(umkm.profile ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${umkm.profile}` : null);
+    setProfilePreview(getStorageUrl(umkm.profile));
     setIsModalOpen(true);
   };
 
@@ -152,8 +153,7 @@ export default function UMKMManagement() {
   }
 
   const getProfileImg = () => {
-    if (umkm?.profile) return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${umkm.profile}`;
-    return null;
+    return getStorageUrl(umkm?.profile);
   };
 
   return (
@@ -278,7 +278,7 @@ export default function UMKMManagement() {
                     <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '12px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden', flexShrink: 0 }}>
                       {staff.avatar ? (
                         <img 
-                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${staff.avatar}`} 
+                          src={getStorageUrl(staff.avatar)!} 
                           alt={staff.name} 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                         />
