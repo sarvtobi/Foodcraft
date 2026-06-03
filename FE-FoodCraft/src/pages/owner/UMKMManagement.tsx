@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../../lib/axios';
 import { 
   Plus, X, Building2, Edit2, MapPin, Phone, 
-  Mail, Calendar, Camera, Info, BadgeCheck 
+  Mail, Calendar, Camera, BadgeCheck 
 } from 'lucide-react';
 import { getStorageUrl } from '../../lib/utils';
 

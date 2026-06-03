@@ -4,7 +4,7 @@ import api from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   Package, ShoppingBag, 
-  Clock, CheckCircle2, 
+  CheckCircle2, 
   Building2, ArrowRight, ChefHat, AlertTriangle, ChevronRight
 } from 'lucide-react';
 import { getStorageUrl } from '../../lib/utils';
