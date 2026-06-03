@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import { 
   Activity, Search, RefreshCw, ChevronLeft, ChevronRight,
-  Globe, Clock, Terminal, User, AlertCircle, Code, Filter,
-  ExternalLink, BarChart2
+  Globe, Terminal, User, AlertCircle, Code, 
+  BarChart2
 } from 'lucide-react';
 
 interface ApiLog {

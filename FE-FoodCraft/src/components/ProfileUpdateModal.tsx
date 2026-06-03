@@ -1,7 +1,7 @@
 import { useState, type FormEvent, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../lib/axios';
-import { X, Camera, Upload, Eye, EyeOff } from 'lucide-react';
+import { X, Camera, Eye, EyeOff } from 'lucide-react';
 import { getStorageUrl } from '../lib/utils';
 import type { User } from '../types';
 
@@ -110,7 +110,7 @@ export default function ProfileUpdateModal({ isOpen, onClose, onSuccess }: Profi
               onClick={() => fileInputRef.current?.click()}
             >
               {getAvatarUrl() ? (
-                <img src={getAvatarUrl()!} alt="Avatar" style={{ width: '100%', height: '100%', objectCover: 'cover' }} />
+                <img src={getAvatarUrl()!} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <span style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>
                   {name.charAt(0).toUpperCase()}
