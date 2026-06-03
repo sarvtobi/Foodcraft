@@ -5,6 +5,7 @@ import {
   ShoppingBag, RefreshCw, ChevronLeft, ChevronRight,
   ArrowRight, Info, PlusCircle, Edit, Trash2
 } from 'lucide-react';
+import { getStorageUrl } from '../../lib/utils';
 
 interface ActivityLog {
   id: number;
@@ -17,7 +18,7 @@ interface ActivityLog {
     old?: Record<string, any>;
   };
   causer: {
-    avatar: any;
+    avatar?: string;
     id: number;
     name: string;
     role: string;
@@ -187,7 +188,7 @@ export default function ActivityLogsPage({ apiPath, title, subtitle }: ActivityL
                         <div style={{ width: '2.25rem', height: '2.25rem', borderRadius: '10px', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', flexShrink: 0, overflow: 'hidden' }}>
                           {log.causer?.avatar ? (
                             <img 
-                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${log.causer.avatar}`} 
+                              src={getStorageUrl(log.causer.avatar)!} 
                               alt={log.causer.name} 
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                             />
