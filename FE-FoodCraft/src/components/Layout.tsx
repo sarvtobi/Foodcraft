@@ -5,6 +5,7 @@ import { LogOut, Menu, X, Home, Users, Store, Settings, Package, ShoppingBag, Ti
 import ProfileUpdateModal from './ProfileUpdateModal';
 import Modal from './Modal';
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler';
+import { getStorageUrl } from '../lib/utils';
 import AnimatedLogo from './AnimatedLogo';
 
 export const Layout = () => {
@@ -98,7 +99,7 @@ export const Layout = () => {
               <div className="avatar">
                 {user?.avatar ? (
                   <img 
-                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${user.avatar}`} 
+                    src={getStorageUrl(user.avatar)!} 
                     alt="Avatar" 
                     style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
                   />

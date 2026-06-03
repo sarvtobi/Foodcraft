@@ -4,6 +4,7 @@ import {
   History, Monitor, Globe, Clock, 
   RefreshCw, ChevronLeft, ChevronRight 
 } from 'lucide-react';
+import { getStorageUrl } from '../../lib/utils';
 
 interface ActivityLog {
   id: number;
@@ -125,7 +126,7 @@ export default function ActivityLogs() {
                         <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', backgroundColor: 'var(--nav-active)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, border: '1px solid var(--border)', overflow: 'hidden' }}>
                           {log.causer?.avatar ? (
                             <img 
-                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${log.causer.avatar}`} 
+                              src={getStorageUrl(log.causer.avatar)!} 
                               alt={log.causer.name} 
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                             />

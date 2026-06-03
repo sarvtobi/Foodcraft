@@ -4,9 +4,11 @@ import api from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   Package, ShoppingBag, 
-  CheckCircle2, 
+  Clock, CheckCircle2, 
   Building2, ArrowRight, ChefHat, AlertTriangle, ChevronRight
 } from 'lucide-react';
+import { getStorageUrl } from '../../lib/utils';
+
 import type { JadwalProduksi } from '../../types';
 
 interface StaffDashboardData {
@@ -179,7 +181,7 @@ export default function StaffDashboard() {
               <div style={{ width: '4.5rem', height: '4.5rem', borderRadius: '16px', background: 'var(--surface)', boxShadow: 'var(--shadow-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', marginBottom: '1rem', border: '1px solid var(--border)', overflow: 'hidden' }}>
                 {data?.umkm_avatar || data?.umkm_profile ? (
                   <img 
-                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/storage/${data.umkm_avatar || data.umkm_profile}`} 
+                    src={getStorageUrl(data.umkm_avatar || data.umkm_profile)!} 
                     alt="UMKM" 
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                   />
